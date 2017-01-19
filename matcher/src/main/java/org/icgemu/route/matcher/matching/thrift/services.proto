@@ -1,0 +1,7 @@
+namespace java com.iq.thrift
+
+
+
+service RouteService{
+	list<String> getMatching(1:String gpslst);
+}
