@@ -4,7 +4,7 @@
   	<groupId>org.icgemu</groupId>
   	<artifactId>offline-route-matcher</artifactId>
   	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>mm</name>
 	<url>http://maven.apache.org</url>
@@ -15,25 +15,12 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.graphhopper/graphhopper-map-matching-core -->
-		<dependency>
-			<groupId>com.graphhopper</groupId>
-			<artifactId>graphhopper-map-matching-core</artifactId>
-			<version>0.8.2</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.geotools/gt-shapefile -->
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-shapefile</artifactId>
-			<version>16.0</version>
-		</dependency>
 
+	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>4.12</version>
+	</dependency>
 	</dependencies>
 
 	<repositories>
@@ -67,4 +54,8 @@
 			</plugin>
 		</plugins>
 	</build>
+	<modules>
+		<module>compiler</module>
+		<module>matcher</module>
+	</modules>
 </project>
