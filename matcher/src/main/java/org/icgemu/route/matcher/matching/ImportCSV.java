@@ -52,9 +52,10 @@ public class ImportCSV {
 		            System.out.println(node.getProperty("id")+"_"+node.getProperty("x")+"_"+node.getProperty("y"));
 		         
 			   }
-        }finally {
         	tx.success();
-            tx.finish(); 
+        }finally {
+        	
+            tx.close();
             graphDb.shutdown();
             br.close();
         }       		
@@ -113,9 +114,10 @@ public class ImportCSV {
 		            System.out.println(node.getProperty("id")+"_"+node.getProperty("x")+"_"+node.getProperty("y"));
                 }
         	}
-        }finally {
         	tx.success();
-            tx.finish(); 
+        }finally {
+        	
+            tx.close();
             graphDb.shutdown();
             br.close();
         }       

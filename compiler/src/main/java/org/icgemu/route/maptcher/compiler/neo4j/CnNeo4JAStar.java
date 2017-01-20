@@ -35,11 +35,11 @@ public class CnNeo4JAStar implements PathFinder<WeightedPath>
     private final EstimateEvaluator<Double> estimateEvaluator;
     private Metadata lastMetadata;
     
-    public CnNeo4JAStar( RelationshipExpander expander,
-            CostEvaluator<Double> lengthEvaluator, EstimateEvaluator<Double> estimateEvaluator )
-    {
-        this( toPathExpander( expander ), lengthEvaluator, estimateEvaluator );
-    }
+//    public CnNeo4JAStar( RelationshipExpander expander,
+//            CostEvaluator<Double> lengthEvaluator, EstimateEvaluator<Double> estimateEvaluator )
+//    {
+//        this( toPathExpander( expander ), lengthEvaluator, estimateEvaluator );
+//    }
     
     public CnNeo4JAStar( PathExpander<?> expander,
             CostEvaluator<Double> lengthEvaluator, EstimateEvaluator<Double> estimateEvaluator )

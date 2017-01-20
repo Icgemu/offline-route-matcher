@@ -2,6 +2,7 @@ package org.icgemu.route.matcher.matching.mapmatch;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;

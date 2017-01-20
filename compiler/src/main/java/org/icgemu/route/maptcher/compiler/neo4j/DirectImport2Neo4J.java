@@ -7,14 +7,16 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.icgemu.route.maptcher.compiler.map.Link;
+import org.icgemu.route.maptcher.compiler.map.ParseUtil;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.graphdb.index.RelationshipIndex;
-import org.neo4j.kernel.internal.EmbeddedGraphDatabase;
 
 /**
  * noe4j工具类，实现将解析得到的node、link信息导入neo4j，建立路网.
@@ -45,8 +47,12 @@ public class DirectImport2Neo4J {
 				"64M");
 		configuration.put("node_cache_size", "64M");
 		configuration.put("relationship_cache_size", "256M");
-		GraphDatabaseService graphDb = new EmbeddedGraphDatabase(neo4jDbPath,
-				configuration);
+		GraphDatabaseService graphDb = new GraphDatabaseFactory()
+				.newEmbeddedDatabaseBuilder(new File(neo4jDbPath))
+				.setConfig(configuration)
+				.newGraphDatabase();
+//		new EmbeddedGraphDatabase(neo4jDbPath,
+//				configuration);
 
 		IndexManager index = graphDb.index();
 		// 以nodeid作为索引
@@ -54,7 +60,7 @@ public class DirectImport2Neo4J {
 		Transaction tx = graphDb.beginTx();
 		try {
 			for (int i = 0; i < nodes.size(); i++) {
-				com.cennavi.compiler.map.Node cnNode = nodes.get(i);
+				org.icgemu.route.maptcher.compiler.map.Node cnNode = nodes.get(i);
 				Node node = graphDb.createNode();
 				node.setProperty("nodeid", cnNode.getId());
 				node.setProperty("lat", cnNode.getLat());
@@ -62,11 +68,8 @@ public class DirectImport2Neo4J {
 				nodeIndex.add(node, "nodeid", node.getProperty("nodeid"));
 			}
 			tx.success();
-		} catch (Exception e) {
-			e.printStackTrace();
-			tx.failure();
 		} finally {
-			tx.finish();
+			tx.close();
 		}
 		graphDb.shutdown();
 	}
@@ -80,14 +83,14 @@ public class DirectImport2Neo4J {
 	 */
 	public static synchronized void importNode(String nodeCsvPath,
 			String neo4jDbPath) throws Exception {
-		ArrayList<com.cennavi.compiler.map.Node> nodes = new ArrayList<com.cennavi.compiler.map.Node>();
+		ArrayList<org.icgemu.route.maptcher.compiler.map.Node> nodes = new ArrayList<org.icgemu.route.maptcher.compiler.map.Node>();
 		// 用于去除重复的node
 		//HashMap<String, String> nkv = new HashMap<String, String>();
 		File file = new File(nodeCsvPath);
 		BufferedReader bf = new BufferedReader(new FileReader(file));
 		String line = null;
 		while ((line = bf.readLine()) != null) {
-			com.cennavi.compiler.map.Node cnNode = ParseUtil.parseNodeLine(line);
+			org.icgemu.route.maptcher.compiler.map.Node cnNode = ParseUtil.parseNodeLine(line);
 			// 去除重复点
 			//if (!nkv.containsKey(cnNode.getId())) {
 				nodes.add(cnNode);
@@ -123,8 +126,10 @@ public class DirectImport2Neo4J {
 				"64M");
 		configuration.put("node_cache_size", "64M");
 		configuration.put("relationship_cache_size", "256M");
-		GraphDatabaseService graphDb = new EmbeddedGraphDatabase(neo4jDbPath,
-				configuration);
+		GraphDatabaseService graphDb = new GraphDatabaseFactory()
+			.newEmbeddedDatabaseBuilder(new File(neo4jDbPath))
+			.setConfig(configuration)
+			.newGraphDatabase();
 
 		IndexManager index = graphDb.index();
 		Index<Node> nodeIndex = index.forNodes("nodeid");
@@ -152,11 +157,9 @@ public class DirectImport2Neo4J {
 				relationIndex.add(road, "linkid", road.getProperty("linkid"));
 			}
 			tx.success();
-		} catch (Exception e) {
-			e.printStackTrace();
-			tx.failure();
+		
 		} finally {
-			tx.finish();
+			tx.close();
 		}
 		graphDb.shutdown();
 	}

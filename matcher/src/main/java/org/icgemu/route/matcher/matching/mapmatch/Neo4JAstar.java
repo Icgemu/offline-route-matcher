@@ -7,24 +7,23 @@ import java.util.List;
 import org.neo4j.graphalgo.CommonEvaluators;
 import org.neo4j.graphalgo.CostEvaluator;
 import org.neo4j.graphalgo.EstimateEvaluator;
+import org.neo4j.graphalgo.GraphAlgoFactory;
 import org.neo4j.graphalgo.PathFinder;
 import org.neo4j.graphalgo.WeightedPath;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.PathExpanders;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.kernel.Traversal;
-
-import com.iq.AStarPath;
 
 
 public class Neo4JAstar {
 	static CostEvaluator<Double> costEval = CommonEvaluators.doubleCostEvaluator("length");
 	static EstimateEvaluator<Double> estimateEval = CommonEvaluators.geoEstimateEvaluator("x","y");
-//	static PathFinder<WeightedPath> astar = GraphAlgoFactory.aStar(Traversal.expanderForAllTypes(),costEval, estimateEval);
-	static PathFinder<WeightedPath> astar = new AStarPath(Traversal.expanderForAllTypes(Direction.OUTGOING),costEval, estimateEval);
+	static PathFinder<WeightedPath> astar = GraphAlgoFactory.aStar(PathExpanders.forDirection(Direction.OUTGOING),costEval, estimateEval);
+//	static PathFinder<WeightedPath> astar = new AStarPath(Traversal.expanderForAllTypes(Direction.OUTGOING),costEval, estimateEval);
 	
 	
 	static GraphDatabaseService graphDb=null;

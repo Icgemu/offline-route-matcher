@@ -8,25 +8,16 @@
 package org.icgemu.route.maptcher.compiler.neo4j;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javax.swing.event.ListSelectionEvent;
-
 import org.neo4j.graphalgo.WeightedPath;
 import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.Expander;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
@@ -41,8 +32,7 @@ import org.neo4j.graphdb.traversal.Evaluation;
 import org.neo4j.graphdb.traversal.InitialBranchState;
 import org.neo4j.graphdb.traversal.PathEvaluator;
 import org.neo4j.graphdb.traversal.Traverser;
-import org.neo4j.kernel.Traversal;
-import org.neo4j.kernel.Uniqueness;
+import org.neo4j.graphdb.traversal.Uniqueness;
 
 /**
  * TODO(这里用一句话描述这个类的作用)
@@ -98,7 +88,7 @@ public class MyTraverser implements Runnable {
 				Index<Node> nodeIndex = index.forNodes("nodeid");
 				Node node = nodeIndex.get("nodeid", snode).getSingle();
 //				
-				Traverser my = Traversal.description()
+				Traverser my = graphDb.traversalDescription()
 				//.depthFirst()
 				.breadthFirst()
 				.expand(new PathExpander<State>(){
@@ -289,7 +279,7 @@ public class MyTraverser implements Runnable {
 		//string_block_size 120 
 		//
 		final GraphDatabaseService graphDb = new GraphDatabaseFactory()
-				.newEmbeddedDatabaseBuilder(db)
+				.newEmbeddedDatabaseBuilder(new File(db))
 				.setConfig(GraphDatabaseSettings.read_only, "true")
 				.newGraphDatabase();
 

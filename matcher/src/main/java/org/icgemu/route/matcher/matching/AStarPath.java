@@ -26,7 +26,6 @@ import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.PathExpander;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipExpander;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.index.Index;
@@ -34,9 +33,6 @@ import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.graphdb.traversal.BranchState;
 import org.neo4j.graphdb.traversal.TraversalMetadata;
 import org.neo4j.helpers.collection.PrefetchingIterator;
-import org.neo4j.kernel.Traversal;
-
-import static org.neo4j.kernel.StandardExpander.toPathExpander;
 
 /**
  * neo4j���·����ʵ��
@@ -50,9 +46,9 @@ public class AStarPath implements PathFinder<WeightedPath>
     private final EstimateEvaluator<Double> estimateEvaluator;
     private Metadata lastMetadata;
     
-    public AStarPath( RelationshipExpander expander, CostEvaluator<Double> lengthEvaluator, EstimateEvaluator<Double> estimateEvaluator )  {
-        this( toPathExpander( expander ), lengthEvaluator, estimateEvaluator );
-    }
+//    public AStarPath( RelationshipExpander expander, CostEvaluator<Double> lengthEvaluator, EstimateEvaluator<Double> estimateEvaluator )  {
+//        this( toPathExpander( expander ), lengthEvaluator, estimateEvaluator );
+//    }
     
     public AStarPath( PathExpander<?> expander,
             CostEvaluator<Double> lengthEvaluator, EstimateEvaluator<Double> estimateEvaluator )

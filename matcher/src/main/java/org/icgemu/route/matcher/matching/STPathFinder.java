@@ -1,5 +1,6 @@
 package org.icgemu.route.matcher.matching;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,12 +16,12 @@ import org.neo4j.graphalgo.WeightedPath;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.PathExpanders;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexManager;
-import org.neo4j.kernel.Traversal;
 
 
 /** �������·��
@@ -30,12 +31,12 @@ import org.neo4j.kernel.Traversal;
 public class STPathFinder {
 	static CostEvaluator<Double> costEval = CommonEvaluators.doubleCostEvaluator("length");
 	static EstimateEvaluator<Double> estimateEval = CommonEvaluators.geoEstimateEvaluator("y","x");
-	PathFinder<WeightedPath> astar = new AStarPath(Traversal.expanderForAllTypes(Direction.OUTGOING),costEval, estimateEval);
+	PathFinder<WeightedPath> astar = new AStarPath(PathExpanders.forDirection(Direction.OUTGOING),costEval, estimateEval);
     GraphDatabaseService graphDb=null;
     
     public STPathFinder(String neo4jDbPath){
-    	astar   = new AStarPath(Traversal.expanderForAllTypes(Direction.OUTGOING),costEval, estimateEval);
-    	graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(neo4jDbPath);
+    	astar   = new AStarPath(PathExpanders.forDirection(Direction.OUTGOING),costEval, estimateEval);
+    	graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(new File(neo4jDbPath));
     }
     
     public void find(long snodeID,long enodeID){
@@ -58,7 +59,6 @@ public class STPathFinder {
 		System.out.println(length);
 	
 		tx.success();
-		tx.finish();
     }
     
     public long[] getRelationship(long id){
@@ -69,7 +69,6 @@ public class STPathFinder {
 		long sn=rel.getStartNode().getId();
 		long en=rel.getEndNode().getId();
 		tx.success();
-		tx.finish();
 		return new long[]{sn,en};
     }
     

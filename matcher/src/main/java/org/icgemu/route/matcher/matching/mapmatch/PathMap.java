@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.iq.pojo.CandidatePath;
+import org.icgemu.route.matcher.matching.pojo.CandidatePath;
 
 
 public class PathMap {

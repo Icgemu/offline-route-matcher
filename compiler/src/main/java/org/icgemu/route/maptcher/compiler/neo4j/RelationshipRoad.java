@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.cennavi.compiler.neo4j;
+package org.icgemu.route.maptcher.compiler.neo4j;
 
 import org.neo4j.graphdb.RelationshipType;
 

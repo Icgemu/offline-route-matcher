@@ -32,15 +32,15 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.JTSFactoryFinder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.icgemu.route.matcher.matching.pojo.CandidatePath;
+import org.icgemu.route.matcher.matching.pojo.CandidatePrj;
+import org.icgemu.route.matcher.matching.pojo.GPS;
+import org.icgemu.route.matcher.matching.pojo.Link;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import redis.clients.jedis.Jedis;
 
-import com.iq.pojo.CandidatePath;
-import com.iq.pojo.CandidatePrj;
-import com.iq.pojo.GPS;
-import com.iq.pojo.Link;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;

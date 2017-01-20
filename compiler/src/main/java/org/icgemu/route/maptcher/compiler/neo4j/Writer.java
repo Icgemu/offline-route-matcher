@@ -5,7 +5,7 @@
  * Author:        Administrator
  * Copyright 2010 Cennavi Corp, All Rights Reserved.
  */
-package com.cennavi.compiler.neo4j;
+package org.icgemu.route.maptcher.compiler.neo4j;
 
 import java.io.BufferedWriter;
 import java.io.File;

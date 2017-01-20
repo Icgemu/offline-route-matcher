@@ -5,12 +5,10 @@
  * Author:        Administrator
  * Copyright 2010 Cennavi Corp, All Rights Reserved.
  */
-package com.cennavi.compiler.neo4j;
+package org.icgemu.route.maptcher.compiler.neo4j;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.cennavi.compiler.neo4j.LinkMB;
 
 /**
  * TODO(这里用一句话描述这个类的作用)
