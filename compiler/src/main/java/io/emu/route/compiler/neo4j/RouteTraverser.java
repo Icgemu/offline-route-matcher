@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
-
 import org.neo4j.graphalgo.WeightedPath;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -27,30 +26,15 @@ import org.neo4j.graphdb.traversal.PathEvaluator;
 import org.neo4j.graphdb.traversal.Traverser;
 import org.neo4j.graphdb.traversal.Uniqueness;
 
-/**
- * TODO(这里用一句话描述这个类的作用)
- * 
- * @author Administrator
- * @version 2014年2月22日 下午10:25:14
- */
-public class MyTraverser implements Runnable {
+public class RouteTraverser implements Runnable {
 	private GraphDatabaseService graphDb = null;
 	LinkedBlockingQueue<MyPath> queue = new LinkedBlockingQueue<MyPath>();
 	IndexManager index;
 	File in;
 	CountDownLatch latch;
 
-	// Traverser(IndexManager index, LinkedBlockingQueue<Path> queue, File in,
-	// CountDownLatch latch) {
-	// // /this.graphDb = graphDb;
-	// this.index = index;
-	// this.queue = queue;
-	//
-	// this.in = in;
-	// this.latch = latch;
-	// // registerShutdownHook(graphDb);
-	// }
-	MyTraverser(GraphDatabaseService graphDb,
+	
+	RouteTraverser(GraphDatabaseService graphDb,
 			LinkedBlockingQueue<MyPath> queue, File in, CountDownLatch latch) {
 		this.graphDb = graphDb;
 		// this.index = index;
@@ -175,10 +159,10 @@ public class MyTraverser implements Runnable {
 								// state.getState().cost = state.getState().cost
 								// + len;
 
-								String mysnode = (String) path.startNode()
-										.getProperty("nodeid");
-								String myenode = (String) path.endNode()
-										.getProperty("nodeid");
+//								String mysnode = (String) path.startNode()
+//										.getProperty("nodeid");
+//								String myenode = (String) path.endNode()
+//										.getProperty("nodeid");
 								// String nodeStr = mysnode
 								// +":"+myenode+":"+path.length()+"=>";
 								if (t > 2 * 60) {
@@ -210,7 +194,7 @@ public class MyTraverser implements Runnable {
 					MyPath myp = new MyPath(0, snode, enode);
 					int cost = 0;
 
-					WeightedPath shortest = Neo4JAstar.find(graphDb, snode,
+					WeightedPath shortest = RouteFinder.find(graphDb, snode,
 							enode);
 					Iterator<Relationship> it = shortest.relationships()
 							.iterator();
@@ -254,19 +238,9 @@ public class MyTraverser implements Runnable {
 		this.latch.countDown();
 	}
 
-	/**
-	 * TODO(功能描述)
-	 * 
-	 * @param args
-	 */
+
 	public static void main(String[] args) throws Exception {
-		// TODO Auto-generated method stub
-
-		// String in = args[0];
-		// String out = args[1];
-		// int thread = Integer.parseInt(args[2]);
-
-		// String db = args[3];
+		
 
 		String in = "E:/Prj/OD/test/uN-G.csv";
 		String out = "E:/Prj/OD/test/";
@@ -277,29 +251,10 @@ public class MyTraverser implements Runnable {
 		HashMap<String, String> configuration = new HashMap<String, String>();
 		configuration.put("use_memory_mapped_buffers", "true");
 		configuration.put("grab_file_lock", "false");
-		// configuration.put("all_stores_total_mapped_memory_size", "0G");
-		// configuration.put("neostore.nodestore.db.mapped_memory", "0M");
-		// configuration.put("neostore.relationshipstore.db.mapped_memory",
-		// "0M");
-		// configuration.put("neostore.propertystore.db.index.keys.mapped_memory",
-		// "0M");
-		// configuration.put("neostore.propertystore.db.index.mapped_memory",
-		// "0M");
-		// configuration.put("neostore.propertystore.db.mapped_memory", "0M");
-		// configuration.put("neostore.propertystore.db.strings.mapped_memory",
-		// "0M");
-		// configuration.put("neostore.propertystore.db.arrays.mapped_memory",
-		// "0M");
-		// configuration.put("node_cache_size", "1024M");
-		// configuration.put("relationship_cache_size", "1024M");
+
 		configuration.put("read_only", "true");
 		configuration.put("cache_type", "none");
 
-		// grab_file_lock true
-		// log_mapped_memory_stats false
-		// relationship_grab_size 100
-		// string_block_size 120
-		//
 		final GraphDatabaseService graphDb = new GraphDatabaseFactory()
 				.newEmbeddedDatabaseBuilder(new File(db))
 				.setConfig(GraphDatabaseSettings.read_only, "true")
@@ -326,19 +281,15 @@ public class MyTraverser implements Runnable {
 			Thread writer = new Thread(new Writer(new File(out, "my-route-" + i
 					+ ".csv"), queue, wlatch));
 			writer.start();
-			new Thread(new MyTraverser(graphDb, queue, files[i], rlatch))
+			new Thread(new RouteTraverser(graphDb, queue, files[i], rlatch))
 					.start();
 		}
 
 		rlatch.await();
 		wlatch.await();
 
-		// for (int i = 0; i < files.length; i++) {
-		// files[i].delete();
-		// }
 		System.out.println(new Date().getTime());
-		// new Finder(graphDb).pre(new File("E://r.csv"), new
-		// File("E://r_pre.csv"));
+		
 	}
 
 }

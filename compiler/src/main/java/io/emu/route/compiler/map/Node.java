@@ -1,10 +1,8 @@
 package io.emu.route.compiler.map;
 
 import java.io.Serializable;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
 
 /**
  * 基础node对象，如需扩展支持更多属性方法，请用装饰者模式扩展.
@@ -14,6 +12,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
  */
 public class Node implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	/**
 	 * point.
 	 */
@@ -71,8 +70,8 @@ public class Node implements Serializable {
 	 *            Coordinate
 	 */
 	private void init(String id, Coordinate cs) {
-		this.id = id;
-		this.point = new Point(cs, new PrecisionModel(), 4326);
+		this.id = id;		
+		this.point = MapUtil.getPoint(cs);
 	}
 
 	/**

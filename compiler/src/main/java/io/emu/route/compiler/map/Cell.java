@@ -10,6 +10,9 @@ import java.util.ArrayList;
  * @version 2013-10-14 下午4:55:48
  */
 public class Cell implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * 小网格ID号，二次网格ID+”_“+行号+”_“+列号.
 	 */

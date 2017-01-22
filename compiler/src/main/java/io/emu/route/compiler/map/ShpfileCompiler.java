@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
+import java.util.Map.Entry;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.simple.SimpleFeatureSource;
@@ -15,22 +15,14 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.text.cql2.CQL;
 import org.opengis.feature.simple.SimpleFeature;
-
+import org.opengis.feature.simple.SimpleFeatureType;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.PrecisionModel;
 
-/**
- * MIF-G地图编译执行类，控制具体编译过程.
- * 
- * @author Ray
- * @version 2013-10-14 下午3:11:36
- */
-public class Mif_G_Compiler {
+public class ShpfileCompiler {
 
 	/**
 	 * 读取shape文件.
@@ -42,7 +34,6 @@ public class Mif_G_Compiler {
 	 *             读取异常
 	 */
 	public static SimpleFeatureSource read(String shapePath) throws Exception {
-		GeometryFactory geometryFactory = new GeometryFactory();
 		File file = new File(shapePath);
 		Map<String, Object> connect = new HashMap<String, Object>();
 		connect.put("url", file.toURI().toURL());
@@ -70,8 +61,8 @@ public class Mif_G_Compiler {
 		HashMap<Long, Long> ajNodeKV = new HashMap<Long, Long>();
 
 		// 定义节点集合
-		FeatureCollection ncollection = null;
-		FeatureIterator nIterator = null;
+		FeatureCollection<SimpleFeatureType,SimpleFeature> ncollection = null;
+		FeatureIterator<SimpleFeature> nIterator = null;
 
 		// 读取节点表，获取邻接点信息
 		SimpleFeatureSource featureSource = read(inNodeShapePath);
@@ -79,7 +70,7 @@ public class Mif_G_Compiler {
 		nIterator = ncollection.features();
 
 		while (nIterator.hasNext()) {
-			SimpleFeature feature = (SimpleFeature) nIterator.next();
+			SimpleFeature feature = nIterator.next();
 			// 获取节点ID
 			Long id = Long.parseLong((String) feature.getAttribute("ID"));
 			// 获取邻接点ID
@@ -118,14 +109,14 @@ public class Mif_G_Compiler {
 		SimpleFeatureSource nodeFeatureSource = read(inNodeShapePath);
 
 		// 节点集合
-		FeatureCollection ncollection = null;
-		FeatureIterator nIterator = null;
+		FeatureCollection<SimpleFeatureType,SimpleFeature> ncollection = null;
+		FeatureIterator<SimpleFeature> nIterator = null;
 
 		ncollection = nodeFeatureSource.getFeatures();
 		nIterator = ncollection.features();
 
 		while (nIterator.hasNext()) {
-			SimpleFeature feature = (SimpleFeature) nIterator.next();
+			SimpleFeature feature = nIterator.next();
 			// 获取节点ID
 			Long id = Long.parseLong((String) feature.getAttribute("ID"));
 			String geometry = (String) feature.getDefaultGeometry().toString();
@@ -176,12 +167,14 @@ public class Mif_G_Compiler {
 				outLinkCsvPath)));
 		// R 表的shapefile
 		SimpleFeatureSource linkFeatureSource = read(inLinkShapePath);
-
-		FeatureCollection linkcollection = linkFeatureSource.getFeatures();
-		FeatureIterator linkIterator = linkcollection.features();
+		
+		// 节点集合
+		
+		FeatureCollection<SimpleFeatureType,SimpleFeature> linkcollection = linkFeatureSource.getFeatures();
+		FeatureIterator<SimpleFeature> linkIterator = linkcollection.features();
 
 		while (linkIterator.hasNext()) {
-			SimpleFeature feature = (SimpleFeature) linkIterator.next();
+			SimpleFeature feature = linkIterator.next();
 			String id = (String) feature.getAttribute("ID");
 			String direction = (String) feature.getAttribute("Direction");
 			String kind = (String) feature.getAttribute("Kind");
@@ -304,10 +297,10 @@ public class Mif_G_Compiler {
 		SimpleFeatureSource linkFeatureSource = read(inLinkShapePath);
 
 		// 循环获取网格号集合
-		FeatureCollection collection = linkFeatureSource.getFeatures();
-		FeatureIterator iterator = collection.features();
+		FeatureCollection<SimpleFeatureType,SimpleFeature> collection = linkFeatureSource.getFeatures();
+		FeatureIterator<SimpleFeature> iterator = collection.features();
 		while (iterator.hasNext()) {
-			SimpleFeature feature = (SimpleFeature) iterator.next();
+			SimpleFeature feature = iterator.next();
 			String gridID = (String) feature.getAttribute("MapID");
 			if (!gridMap.containsKey(gridID)) {
 				gridMap.put(gridID, Integer.parseInt(gridID));
@@ -315,19 +308,17 @@ public class Mif_G_Compiler {
 		}
 
 		// 按网格集合循环选择link
-		Iterator itor = gridMap.entrySet().iterator();
+		Iterator<Entry<String, Integer>> itor = gridMap.entrySet().iterator();
 		while (itor.hasNext()) {
-			Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) itor
-					.next();
+			Map.Entry<String, Integer> entry = itor.next();
 			int gridNo = entry.getValue();
 			// 生成小网格信息
 			HashMap<String, StringBuffer> cellKV = tileCell(gridNo,
 					linkFeatureSource, csize, cellType);
 
-			Iterator iteratorCkv = cellKV.entrySet().iterator();
+			Iterator<Entry<String, StringBuffer>>  iteratorCkv = cellKV.entrySet().iterator();
 			while (iteratorCkv.hasNext()) {
-				Map.Entry<String, StringBuffer> e = (Map.Entry<String, StringBuffer>) iteratorCkv
-						.next();
+				Map.Entry<String, StringBuffer> e = iteratorCkv.next();
 				out.println(e.getKey() + ":" + e.getValue());
 			}
 		}
@@ -387,15 +378,15 @@ public class Mif_G_Compiler {
 		double bmaxy = maxy + 0.0002;
 
 		// 得到大网格覆盖范围包含路链信息
-		FeatureCollection collection = linkFeatureSource.getFeatures(CQL
+		FeatureCollection<SimpleFeatureType,SimpleFeature> collection = linkFeatureSource.getFeatures(CQL
 				.toFilter("BBOX(the_geom," + bminx + "," + bminy + "," + bmaxx
 						+ "," + bmaxy + ")"));
-		FeatureIterator iterator = collection.features();
+		FeatureIterator<SimpleFeature> iterator = collection.features();
 
 		while (iterator.hasNext()) {
 			SimpleFeature feature = (SimpleFeature) iterator.next();
 
-			String kind = (String) feature.getAttribute("Kind");
+//			String kind = (String) feature.getAttribute("Kind");
 
 			// if ((kind.substring(0, 2)).equalsIgnoreCase("08")) {
 			// // 去掉08道路等级,如需保留去掉此行
@@ -405,11 +396,10 @@ public class Mif_G_Compiler {
 			// 获取路链坐标
 			Geometry geom = (Geometry) feature.getDefaultGeometry();
 
-			Iterator cellPolygonIterator = cellPolygonKV.entrySet().iterator();
+			Iterator<Entry<String, Polygon>> cellPolygonIterator = cellPolygonKV.entrySet().iterator();
 			while (cellPolygonIterator.hasNext()) {
 
-				Map.Entry<String, Polygon> entry = (Map.Entry<String, Polygon>) cellPolygonIterator
-						.next();
+				Map.Entry<String, Polygon> entry = cellPolygonIterator.next();
 				String id = entry.getKey();
 				Polygon polygon = entry.getValue();
 
@@ -524,10 +514,8 @@ public class Mif_G_Compiler {
 						new Coordinate(cminx, cmaxy),
 						new Coordinate(cminx, cminy), };
 
-				LinearRing linearRing = new LinearRing(points,
-						new PrecisionModel(), 4326);
-				Polygon polygon = new Polygon(linearRing, new PrecisionModel(),
-						4326);
+				LinearRing linearRing = MapUtil.geoFactory.createLinearRing(points);
+				Polygon polygon = MapUtil.geoFactory.createPolygon(linearRing);
 				cellPolygonKV.put(gridNo + "_" + m + "_" + n, polygon);
 				// System.out.println(gridNo+"_"+m+"_"+n+" : "+polygon);
 			}
@@ -567,20 +555,8 @@ public class Mif_G_Compiler {
 		}
 	}
 
-	/**
-	 * 单省份编译入口. TODO(功能描述)
-	 * 
-	 * @param args
-	 *            参数
-	 */
 	public static void main(String[] args) {
 		try {
-			// HashMap<Long,Long>
-			// kv=getReplaceNodeKV("/home/hadoop/Downloads/shp/N.shp");
-			// processNode("/home/hadoop/Downloads/shp/N.shp","/home/hadoop/Downloads/shp/N.csv",kv);
-			// processLink("/home/hadoop/Downloads/shp/R.shp","/home/hadoop/Downloads/shp/R.csv",kv);
-			// processRoadTopology("/home/hadoop/Downloads/shp/R.csv","/home/hadoop/Downloads/shp/T.csv");
-			// tileGrid("/home/hadoop/Downloads/shp/R.shp","/home/hadoop/Downloads/shp/C.csv");
 
 			processMap("F:/beijing/level2/beijing/road/Nbeijing.shp",
 					"F:/beijing/level2/beijing/road/Rbeijing.shp",
@@ -588,7 +564,6 @@ public class Mif_G_Compiler {
 					"E:/Prj/OD/test/C-60-G.csv");
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

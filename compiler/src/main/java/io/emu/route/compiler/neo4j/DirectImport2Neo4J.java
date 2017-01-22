@@ -19,22 +19,8 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.graphdb.index.RelationshipIndex;
 
-/**
- * noe4j工具类，实现将解析得到的node、link信息导入neo4j，建立路网.
- * 
- * @author Ray
- * @version 2013-10-14 下午3:22:32
- */
 public class DirectImport2Neo4J {
 
-	/**
-	 * 连接neo4j写入node.
-	 * 
-	 * @param nodes
-	 *            node数据集合
-	 * @param neo4jDbPath
-	 *            neo4j数据库路径
-	 */
 	private static void saveNode(
 			ArrayList<io.emu.route.compiler.map.Node> nodes, String neo4jDbPath) {
 
@@ -53,7 +39,8 @@ public class DirectImport2Neo4J {
 		configuration.put("relationship_cache_size", "256M");
 		GraphDatabaseService graphDb = new GraphDatabaseFactory()
 				.newEmbeddedDatabaseBuilder(new File(neo4jDbPath))
-				.setConfig(configuration).newGraphDatabase();
+				.setConfig(configuration)
+				.newGraphDatabase();
 		// new EmbeddedGraphDatabase(neo4jDbPath,
 		// configuration);
 
@@ -209,46 +196,15 @@ public class DirectImport2Neo4J {
 		bf.close();
 	}
 
-	/**
-	 * 分省份保存后的csv文件合成一个大文件，调用import接口在neo4j中生成全国路网拓扑.
-	 * 
-	 * @param args
-	 *            参数
-	 * @throws URISyntaxException
-	 *             URISyntaxException
-	 */
 	public static void main(String[] args) throws URISyntaxException {
-
-		/*****************************************************/
-
 		try {
-			// importNode("/home/hadoop/Downloads/csv1.3/N.csv",
-			// "/home/hadoop/Downloads/csv1.3/neo4j-db");
 			importNode("E:/Prj/OD/test/uN-G.csv", "E:/Prj/OD/test/neo4j-db-G/");
 			importLink("E:/Prj/OD/test/R-G.csv", "E:/Prj/OD/test/neo4j-db-G/");
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 
-		/*****************************************************/
-
-		// GraphDatabaseService graphDb = new
-		// EmbeddedGraphDatabase("D:/neo4j-db" );
-		// IndexManager index = graphDb.index();
-		// Index<Node> nodeIndex = index.forNodes( "nodeid" );
-		// RelationshipIndex relationIndex = index.forRelationships( "linkid" );
-		// Transaction tx = graphDb.beginTx();
-		// try{
-		// Node node = nodeIndex.get("nodeid", 58614410102l).getSingle();
-		// System.out.println(node.getProperty("nodeid"));
-		// tx.success();
-		// }catch (Exception e) {
-		// e.printStackTrace();
-		// tx.failure();
-		// }finally{
-		// tx.finish();
-		// }
-		// graphDb.shutdown();
+	
 	}
 
 }

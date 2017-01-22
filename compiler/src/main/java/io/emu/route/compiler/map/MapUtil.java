@@ -2,7 +2,6 @@ package io.emu.route.compiler.map;
 
 import org.geotools.referencing.GeodeticCalculator;
 import org.geotools.referencing.datum.DefaultEllipsoid;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -26,6 +25,7 @@ public class MapUtil {
 	 * 小网格边长，60m.
 	 */
 	public final static int DEFAULT_CELL_SIZE = 60;
+	public final static GeometryFactory  geoFactory = new GeometryFactory(new PrecisionModel(),4326);
 
 	/**
 	 * 按经纬度坐标查找该点所在的二级网格.
@@ -269,7 +269,7 @@ public class MapUtil {
 	 */
 	public static Coordinate closestPoint(Geometry p, Geometry l) {
 		Coordinate clsPoint = null;
-		clsPoint = DistanceOp.closestPoints(p, l)[1];
+		clsPoint = DistanceOp.nearestPoints(p, l)[1];
 		return clsPoint;
 	}
 
@@ -283,9 +283,8 @@ public class MapUtil {
 	 * @return Coordinate
 	 */
 	public static Coordinate closestPoint2LineString(Coordinate p, LineString l) {
-		Coordinate clsPoint = null;
-		clsPoint = DistanceOp.closestPoints(new Point(p, new PrecisionModel(),
-				4326), l)[1];
+		Coordinate clsPoint = null;		
+		clsPoint = DistanceOp.nearestPoints( geoFactory.createPoint(p), l)[1];
 		return clsPoint;
 	}
 
@@ -301,8 +300,7 @@ public class MapUtil {
 	public static Coordinate closestPoint2MultiLineString(Coordinate p,
 			MultiLineString ml) {
 		Coordinate clsPoint = null;
-		clsPoint = DistanceOp.closestPoints(new Point(p, new PrecisionModel(),
-				4326), ml)[1];
+		clsPoint = DistanceOp.nearestPoints(geoFactory.createPoint(p), ml)[1];
 		return clsPoint;
 	}
 
@@ -335,7 +333,7 @@ public class MapUtil {
 	 */
 	public static Point getPoint(double lon, double lat) {
 		Coordinate p = new Coordinate(lon, lat);
-		return new Point(p, new PrecisionModel(), 4326);
+		return geoFactory.createPoint(p);
 	}
 
 	/**
@@ -346,58 +344,6 @@ public class MapUtil {
 	 * @return Point
 	 */
 	public static Point getPoint(Coordinate p) {
-		return new Point(p, new PrecisionModel(), 4326);
-	}
-
-	/**
-	 * 测试 .
-	 * 
-	 * @param args
-	 *            参数
-	 */
-	public static void main(String[] args) {
-
-		System.out.println(azimuth(116.3555, 39.8984, 116.3253, 39.9416));
-
-		// System.out.println(findGrid(116.57760,40.26083));
-		// System.out.println(findCell(116.57760,40.26083));
-		// System.out.println(azimuth(116.57760,40.26083,116.57944,40.25850));
-		// System.out.println(calPointDistance(116.57760,40.26083,116.57944,40.25850));
-		// System.out.println(azimuth(116.57944,40.25850,116.57760,40.26083));
-		// System.out.println( closestPoint2LineSegment(new
-		// Coordinate(116.57677,40.25995),new LineSegment(new
-		// Coordinate(116.57760,40.26083),new Coordinate(116.57944,40.25850)))
-		// );
-
-		String s1 = "LINESTRING (117.3735795454545325 40.4791139527147479, 117.3745269775390057 40.4789276123050001, 117.3750000000000000 40.4789428710939987)";
-		String s2 = "MULTILINESTRING ((117.3039772727272805 40.4774920827399356, 117.3037261962890057 40.4776229858400001, 117.3035240173339986 40.4777374267579972, 117.3030776977540057 40.4782384236649975, 117.3028373718260013 40.4788513183589984, 117.3027804163063763 40.4788961038961048), (117.3023410778439484 40.4788961038961048, 117.3022880554199929 40.4788131713870030, 117.3023262023930045 40.4777781168619981, 117.3022232055659941 40.4775492350259967, 117.3020706176759944 40.4773966471350022, 117.3018661499020254 40.4772727272727266))";
-		try {
-
-			Geometry geom1 = parseWktString(s1);
-			LineString ls = (LineString) geom1;
-
-			Geometry geom2 = parseWktString(s2);
-			MultiLineString ml = (MultiLineString) geom2;
-
-			// System.out.println(closestPoint2LineString1(new
-			// Coordinate(116.57677,40.25995),ls));
-			// System.out.println(closestPoint2LineString2(new
-			// Coordinate(116.57677,40.25995),ls));
-			//
-			// System.out.println(closestPoint2MultiLineString1(new
-			// Coordinate(116.57677,40.25995),ml));
-			// System.out.println(closestPoint2MultiLineString2(new
-			// Coordinate(116.57677,40.25995),ml));
-
-			// LineString l=(LineString)ls.getGeometryN(0);
-			// int c=ls.getNumGeometries();
-			// for(int i=0;i<c;i++){
-			// System.out.println(ls.getGeometryN(i));
-			// }
-			System.out.println(getCellBound("605641_132_112", 60).toString());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return geoFactory.createPoint(p);
 	}
 }

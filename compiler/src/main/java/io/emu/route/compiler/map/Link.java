@@ -12,6 +12,7 @@ import com.vividsolutions.jts.geom.LineString;
  */
 public class Link implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	/**
 	 * link id.
 	 */
