@@ -123,9 +123,9 @@ public class LinkMB {
 
 	@Override
 	public String toString() {
-		return linkid + "," /**+ snode + "," + enode + ","*/ + direction + ","
-				+ roadclass + "," + kind + "," + width + "," + length + ","
-				+ speed;
+		return linkid + ","/** + snode + "," + enode + "," */
+		+ direction + "," + roadclass + "," + kind + "," + width + "," + length
+				+ "," + speed;
 	}
 
 }

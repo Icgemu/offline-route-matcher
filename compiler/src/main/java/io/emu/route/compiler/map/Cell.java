@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @version 2013-10-14 下午4:55:48
  */
 public class Cell implements Serializable {
-    /**
+	/**
 	 * 小网格ID号，二次网格ID+”_“+行号+”_“+列号.
 	 */
 	private String cellid;
@@ -22,8 +22,11 @@ public class Cell implements Serializable {
 
 	/**
 	 * 构造函数.
-	 * @param cellid cellid
-	 * @param cellLinkIDs cell包括的linkid集合
+	 * 
+	 * @param cellid
+	 *            cellid
+	 * @param cellLinkIDs
+	 *            cell包括的linkid集合
 	 */
 	public Cell(String cellid, ArrayList<String> cellLinkIDs) {
 		super();
@@ -33,6 +36,7 @@ public class Cell implements Serializable {
 
 	/**
 	 * 得到cellid.
+	 * 
 	 * @return cellid
 	 */
 	public String getCellid() {
@@ -41,6 +45,7 @@ public class Cell implements Serializable {
 
 	/**
 	 * 得到cell包含路链集合.
+	 * 
 	 * @return 路链id集合
 	 */
 	public ArrayList<String> getCellLinkIDs() {

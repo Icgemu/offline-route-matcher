@@ -40,20 +40,20 @@ public class MyTraverser implements Runnable {
 	File in;
 	CountDownLatch latch;
 
-//	Traverser(IndexManager index, LinkedBlockingQueue<Path> queue, File in,
-//			CountDownLatch latch) {
-//		// /this.graphDb = graphDb;
-//		this.index = index;
-//		this.queue = queue;
-//
-//		this.in = in;
-//		this.latch = latch;
-//		// registerShutdownHook(graphDb);
-//	}
-	MyTraverser(GraphDatabaseService graphDb, LinkedBlockingQueue<MyPath> queue, File in,
-			CountDownLatch latch) {
+	// Traverser(IndexManager index, LinkedBlockingQueue<Path> queue, File in,
+	// CountDownLatch latch) {
+	// // /this.graphDb = graphDb;
+	// this.index = index;
+	// this.queue = queue;
+	//
+	// this.in = in;
+	// this.latch = latch;
+	// // registerShutdownHook(graphDb);
+	// }
+	MyTraverser(GraphDatabaseService graphDb,
+			LinkedBlockingQueue<MyPath> queue, File in, CountDownLatch latch) {
 		this.graphDb = graphDb;
-		//this.index = index;
+		// this.index = index;
 		this.queue = queue;
 
 		this.in = in;
@@ -71,154 +71,179 @@ public class MyTraverser implements Runnable {
 			int cnt = 0;
 			while ((line = bf.readLine()) != null) {
 				cnt++;
-				if(cnt%10000==0){System.out.println(in.getName()+"-line:"+cnt);}
+				if (cnt % 10000 == 0) {
+					System.out.println(in.getName() + "-line:" + cnt);
+				}
 				String[] info = line.split(":");
-//				Node node = graphDb.getNodeById(Long.parseLong(info[0].trim()));
-//				String snode = (String) node.getProperty("nodeid");
+				// Node node =
+				// graphDb.getNodeById(Long.parseLong(info[0].trim()));
+				// String snode = (String) node.getProperty("nodeid");
 				String snode = info[0];
-//
+				//
 				IndexManager index = graphDb.index();
 				Index<Node> nodeIndex = index.forNodes("nodeid");
 				Node node = nodeIndex.get("nodeid", snode).getSingle();
-//				
-				Traverser my = graphDb.traversalDescription()
-				//.depthFirst()
-				.breadthFirst()
-				.expand(new PathExpander<State>(){
+				//
+				Traverser my = graphDb
+						.traversalDescription()
+						// .depthFirst()
+						.breadthFirst()
+						.expand(new PathExpander<State>() {
 
-					@Override
-					public Iterable<Relationship> expand(Path path,
-							BranchState<State> state) {
-						// TODO Auto-generated method stub
-						//System.out.println("call expand method.");
-						Iterable<Relationship> b = null;
-						int retry = 3;
-						while(retry>0){
-							try{
-								b = path.endNode().getRelationships(Direction.OUTGOING);
-								break;
-							}catch(Exception e){
-								e.printStackTrace();
-								System.out.println("err getRelationships=>"+path.endNode());
-								retry -- ;
-							}
-						}
-						
-						return b;
-					}
-
-					@Override
-					public PathExpander<State> reverse() {
-						// TODO Auto-generated method stub
-						//System.out.println("call unsafe method.");
-						return null;
-					}
-
-					
-				},new InitialBranchState.State<State>(new State(),new State()))
-				.evaluator(new PathEvaluator<State>(){
-
-					@Override
-					public Evaluation evaluate(org.neo4j.graphdb.Path path) {
-						// TODO Auto-generated method stub
-						System.out.println("call unsafe method.");
-						return null;
-					}
-
-					@Override
-					public Evaluation evaluate(org.neo4j.graphdb.Path path,
-							BranchState<State> state) {
-						// TODO Auto-generated method stub
-						//System.out.println("call evaluate method.");
-						//if(path.lastRelationship() == null&&){}
-						if(path.startNode() == path.endNode()){
-							//System.out.println(state.getState().t+"=>"+"Start Node");
-							return Evaluation.EXCLUDE_AND_CONTINUE;}
-						//Relationship rel = path.lastRelationship();
-						double t =0.0;
-						int cost = 0;
-						for(Relationship rel:path.relationships()){
-							Float len = 0.0f;
-							Float speedlimit = 0.0f;
-							int retry = 3;
-							
-							while(retry>0){
-								try{
-									len = (Float) rel.getProperty("length");							
-									speedlimit = (Float) rel.getProperty("speedlimit");
-									break;
-								}catch(Exception e){
-									e.printStackTrace();
-									System.out.println("err Node=>"+rel);
-									retry -- ;
+							@Override
+							public Iterable<Relationship> expand(Path path,
+									BranchState<State> state) {
+								// TODO Auto-generated method stub
+								// System.out.println("call expand method.");
+								Iterable<Relationship> b = null;
+								int retry = 3;
+								while (retry > 0) {
+									try {
+										b = path.endNode().getRelationships(
+												Direction.OUTGOING);
+										break;
+									} catch (Exception e) {
+										e.printStackTrace();
+										System.out.println("err getRelationships=>"
+												+ path.endNode());
+										retry--;
+									}
 								}
+
+								return b;
 							}
-							
-							
-							cost+=len;
-							t += len / (speedlimit * 1000.0 / (3600));
-						}
-						
-//						state.getState().t = state.getState().t + t;
-//						state.getState().cost = state.getState().cost + len;
-						
-						String mysnode = (String)path.startNode().getProperty("nodeid");
-						String myenode = (String)path.endNode().getProperty("nodeid");
-						//String nodeStr = mysnode +":"+myenode+":"+path.length()+"=>";
-						if(t>2*60){
-							
-							//System.out.println(nodeStr+t+","+cost+"=>"+"INCLUDE_AND_PRUNE");
-//							state.getState().t = state.getState().t - t;
-//							state.getState().cost = state.getState().cost - len;
-							return Evaluation.INCLUDE_AND_PRUNE;
-						}
-//						state.getState().t = state.getState().t + t;
-//						state.getState().cost = state.getState().cost + len;
-						//System.out.println(nodeStr+t+","+cost+"=>"+"INCLUDE_AND_CONTINUE");
-						return Evaluation.INCLUDE_AND_CONTINUE;
-					}
-					
-				})
-				
-				.uniqueness(Uniqueness.NODE_GLOBAL)
-				.traverse(node)
-				;
-				
-				for(Path p:my){
+
+							@Override
+							public PathExpander<State> reverse() {
+								// TODO Auto-generated method stub
+								// System.out.println("call unsafe method.");
+								return null;
+							}
+
+						},
+								new InitialBranchState.State<State>(
+										new State(), new State()))
+						.evaluator(new PathEvaluator<State>() {
+
+							@Override
+							public Evaluation evaluate(
+									org.neo4j.graphdb.Path path) {
+								// TODO Auto-generated method stub
+								System.out.println("call unsafe method.");
+								return null;
+							}
+
+							@Override
+							public Evaluation evaluate(
+									org.neo4j.graphdb.Path path,
+									BranchState<State> state) {
+								// TODO Auto-generated method stub
+								// System.out.println("call evaluate method.");
+								// if(path.lastRelationship() == null&&){}
+								if (path.startNode() == path.endNode()) {
+									// System.out.println(state.getState().t+"=>"+"Start Node");
+									return Evaluation.EXCLUDE_AND_CONTINUE;
+								}
+								// Relationship rel = path.lastRelationship();
+								double t = 0.0;
+								int cost = 0;
+								for (Relationship rel : path.relationships()) {
+									Float len = 0.0f;
+									Float speedlimit = 0.0f;
+									int retry = 3;
+
+									while (retry > 0) {
+										try {
+											len = (Float) rel
+													.getProperty("length");
+											speedlimit = (Float) rel
+													.getProperty("speedlimit");
+											break;
+										} catch (Exception e) {
+											e.printStackTrace();
+											System.out.println("err Node=>"
+													+ rel);
+											retry--;
+										}
+									}
+
+									cost += len;
+									t += len / (speedlimit * 1000.0 / (3600));
+								}
+
+								// state.getState().t = state.getState().t + t;
+								// state.getState().cost = state.getState().cost
+								// + len;
+
+								String mysnode = (String) path.startNode()
+										.getProperty("nodeid");
+								String myenode = (String) path.endNode()
+										.getProperty("nodeid");
+								// String nodeStr = mysnode
+								// +":"+myenode+":"+path.length()+"=>";
+								if (t > 2 * 60) {
+
+									// System.out.println(nodeStr+t+","+cost+"=>"+"INCLUDE_AND_PRUNE");
+									// state.getState().t = state.getState().t -
+									// t;
+									// state.getState().cost =
+									// state.getState().cost - len;
+									return Evaluation.INCLUDE_AND_PRUNE;
+								}
+								// state.getState().t = state.getState().t + t;
+								// state.getState().cost = state.getState().cost
+								// + len;
+								// System.out.println(nodeStr+t+","+cost+"=>"+"INCLUDE_AND_CONTINUE");
+								return Evaluation.INCLUDE_AND_CONTINUE;
+							}
+
+						})
+
+						.uniqueness(Uniqueness.NODE_GLOBAL).traverse(node);
+
+				for (Path p : my) {
 					String enode = (String) p.endNode().getProperty("nodeid");
-					//String snode = (String) p.startNode().getProperty("nodeid");
-					//Node s = p.startNode();
-					//Node e = p.endNode();
-					MyPath myp = new MyPath(0,snode,enode);
+					// String snode = (String)
+					// p.startNode().getProperty("nodeid");
+					// Node s = p.startNode();
+					// Node e = p.endNode();
+					MyPath myp = new MyPath(0, snode, enode);
 					int cost = 0;
-					
-					WeightedPath shortest = Neo4JAstar.find(graphDb, snode, enode);
-					Iterator<Relationship> it = shortest.relationships().iterator();
-					while(it.hasNext()){
+
+					WeightedPath shortest = Neo4JAstar.find(graphDb, snode,
+							enode);
+					Iterator<Relationship> it = shortest.relationships()
+							.iterator();
+					while (it.hasNext()) {
 						Relationship rel = it.next();
-						String mysnode = (String)rel.getStartNode().getProperty("nodeid");
-						String myenode = (String)rel.getEndNode().getProperty("nodeid");
+						String mysnode = (String) rel.getStartNode()
+								.getProperty("nodeid");
+						String myenode = (String) rel.getEndNode().getProperty(
+								"nodeid");
 						String id = (String) rel.getProperty("linkid") + "";
 						String width = Float.toString((Float) rel
 								.getProperty("width"));
 						float flength = (Float) rel.getProperty("length");
-						int length = (int)flength;
-	
-						Float speedlimit = (Float) rel.getProperty("speedlimit");
-						Integer direction = (Integer) rel.getProperty("direction");
+						int length = (int) flength;
+
+						Float speedlimit = (Float) rel
+								.getProperty("speedlimit");
+						Integer direction = (Integer) rel
+								.getProperty("direction");
 						String kind = (String) rel.getProperty("roadtype");
-						String roadclass = (String) rel.getProperty("roadclass");
+						String roadclass = (String) rel
+								.getProperty("roadclass");
 						cost += length;
-						
+
 						LinkMB ll = new LinkMB(id, mysnode, myenode,
-						direction.toString(), roadclass, kind, width,
-						length, speedlimit.intValue());
+								direction.toString(), roadclass, kind, width,
+								length, speedlimit.intValue());
 						myp.addLink(ll);
 					}
-					myp.setCost((int)shortest.weight());
+					myp.setCost((int) shortest.weight());
 					queue.put(myp);
 				}
-				//prePath(snode, new ArrayList<LinkMB>(), queue);
+				// prePath(snode, new ArrayList<LinkMB>(), queue);
 			}
 
 			bf.close();
@@ -229,7 +254,6 @@ public class MyTraverser implements Runnable {
 		this.latch.countDown();
 	}
 
-
 	/**
 	 * TODO(功能描述)
 	 * 
@@ -238,12 +262,12 @@ public class MyTraverser implements Runnable {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 
-		//String in = args[0];
-		//String out = args[1];
-		//int thread = Integer.parseInt(args[2]);
+		// String in = args[0];
+		// String out = args[1];
+		// int thread = Integer.parseInt(args[2]);
 
-		//String db = args[3];
-		
+		// String db = args[3];
+
 		String in = "E:/Prj/OD/test/uN-G.csv";
 		String out = "E:/Prj/OD/test/";
 		int thread = 1;
@@ -253,23 +277,28 @@ public class MyTraverser implements Runnable {
 		HashMap<String, String> configuration = new HashMap<String, String>();
 		configuration.put("use_memory_mapped_buffers", "true");
 		configuration.put("grab_file_lock", "false");
-//		configuration.put("all_stores_total_mapped_memory_size", "0G");		
-//		configuration.put("neostore.nodestore.db.mapped_memory", "0M");
-//		configuration.put("neostore.relationshipstore.db.mapped_memory", "0M");
-//		configuration.put("neostore.propertystore.db.index.keys.mapped_memory", "0M");
-//		configuration.put("neostore.propertystore.db.index.mapped_memory", "0M");		
-//		configuration.put("neostore.propertystore.db.mapped_memory", "0M");
-//		configuration.put("neostore.propertystore.db.strings.mapped_memory", "0M");
-//		configuration.put("neostore.propertystore.db.arrays.mapped_memory", "0M");		
-//		configuration.put("node_cache_size", "1024M");
-//		configuration.put("relationship_cache_size", "1024M");
+		// configuration.put("all_stores_total_mapped_memory_size", "0G");
+		// configuration.put("neostore.nodestore.db.mapped_memory", "0M");
+		// configuration.put("neostore.relationshipstore.db.mapped_memory",
+		// "0M");
+		// configuration.put("neostore.propertystore.db.index.keys.mapped_memory",
+		// "0M");
+		// configuration.put("neostore.propertystore.db.index.mapped_memory",
+		// "0M");
+		// configuration.put("neostore.propertystore.db.mapped_memory", "0M");
+		// configuration.put("neostore.propertystore.db.strings.mapped_memory",
+		// "0M");
+		// configuration.put("neostore.propertystore.db.arrays.mapped_memory",
+		// "0M");
+		// configuration.put("node_cache_size", "1024M");
+		// configuration.put("relationship_cache_size", "1024M");
 		configuration.put("read_only", "true");
 		configuration.put("cache_type", "none");
 
-		//grab_file_lock true
-		//log_mapped_memory_stats false
-		//relationship_grab_size 100
-		//string_block_size 120 
+		// grab_file_lock true
+		// log_mapped_memory_stats false
+		// relationship_grab_size 100
+		// string_block_size 120
 		//
 		final GraphDatabaseService graphDb = new GraphDatabaseFactory()
 				.newEmbeddedDatabaseBuilder(new File(db))
@@ -283,7 +312,7 @@ public class MyTraverser implements Runnable {
 			}
 		});
 
-		//IndexManager index = graphDb.index();
+		// IndexManager index = graphDb.index();
 
 		File[] files = Spliter.split(new File(in), thread);
 
@@ -291,21 +320,22 @@ public class MyTraverser implements Runnable {
 		CountDownLatch wlatch = new CountDownLatch(thread);
 		CountDownLatch rlatch = new CountDownLatch(thread);
 		for (int i = 0; i < thread; i++) {
-			//String dir = i%2==0?"E://":"F://";
+			// String dir = i%2==0?"E://":"F://";
 			LinkedBlockingQueue<MyPath> queue = new LinkedBlockingQueue<MyPath>(
 					1000);
 			Thread writer = new Thread(new Writer(new File(out, "my-route-" + i
 					+ ".csv"), queue, wlatch));
 			writer.start();
-			new Thread(new MyTraverser(graphDb, queue, files[i], rlatch)).start();
+			new Thread(new MyTraverser(graphDb, queue, files[i], rlatch))
+					.start();
 		}
 
 		rlatch.await();
 		wlatch.await();
 
-//		for (int i = 0; i < files.length; i++) {
-//			files[i].delete();
-//		}
+		// for (int i = 0; i < files.length; i++) {
+		// files[i].delete();
+		// }
 		System.out.println(new Date().getTime());
 		// new Finder(graphDb).pre(new File("E://r.csv"), new
 		// File("E://r_pre.csv"));

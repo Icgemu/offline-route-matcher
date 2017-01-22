@@ -55,16 +55,27 @@ public class Link implements Serializable {
 
 	/**
 	 * 构造函数.
-	 * @param id linkid
-	 * @param snode start node
-	 * @param enode end node
-	 * @param direction direction
-	 * @param roadclass 道路等级R表Kind前两位
-	 * @param roadtype 道路属性R表Kind后两位
-	 * @param width 宽度
-	 * @param length 长度
-	 * @param speedlimit 限速
-	 * @param geometry 形状
+	 * 
+	 * @param id
+	 *            linkid
+	 * @param snode
+	 *            start node
+	 * @param enode
+	 *            end node
+	 * @param direction
+	 *            direction
+	 * @param roadclass
+	 *            道路等级R表Kind前两位
+	 * @param roadtype
+	 *            道路属性R表Kind后两位
+	 * @param width
+	 *            宽度
+	 * @param length
+	 *            长度
+	 * @param speedlimit
+	 *            限速
+	 * @param geometry
+	 *            形状
 	 */
 	public Link(String id, String snode, String enode, int direction,
 			String roadclass, String roadtype, float width, float length,
@@ -83,6 +94,7 @@ public class Link implements Serializable {
 
 	/**
 	 * 得到linkid.
+	 * 
 	 * @return linkid
 	 */
 	public String getId() {
@@ -91,6 +103,7 @@ public class Link implements Serializable {
 
 	/**
 	 * 得到start node.
+	 * 
 	 * @return String nodeid
 	 */
 	public String getSnode() {
@@ -99,6 +112,7 @@ public class Link implements Serializable {
 
 	/**
 	 * 得到end node id.
+	 * 
 	 * @return String nodeid
 	 */
 	public String getEnode() {
@@ -107,6 +121,7 @@ public class Link implements Serializable {
 
 	/**
 	 * width.
+	 * 
 	 * @return float width
 	 */
 	public float getWidth() {
@@ -115,6 +130,7 @@ public class Link implements Serializable {
 
 	/**
 	 * length.
+	 * 
 	 * @return float length
 	 */
 	public float getLength() {
@@ -123,6 +139,7 @@ public class Link implements Serializable {
 
 	/**
 	 * 限速.
+	 * 
 	 * @return float 限速
 	 */
 	public float getSpeedlimit() {
@@ -131,15 +148,17 @@ public class Link implements Serializable {
 
 	/**
 	 * direction.
+	 * 
 	 * @return int
 	 */
-	
+
 	public int getDirection() {
 		return direction;
 	}
 
 	/**
 	 * 得到道路类型.
+	 * 
 	 * @return String 0x
 	 */
 	public String getRoadtype() {
@@ -148,6 +167,7 @@ public class Link implements Serializable {
 
 	/**
 	 * 得到道路等级.
+	 * 
 	 * @return String 0x
 	 */
 	public String getRoadclass() {
@@ -156,6 +176,7 @@ public class Link implements Serializable {
 
 	/**
 	 * 得到路链形状.
+	 * 
 	 * @return LineString
 	 */
 	public LineString getGeometry() {
@@ -164,7 +185,9 @@ public class Link implements Serializable {
 
 	/**
 	 * 判断路链是否相等.
-	 * @param link 路链
+	 * 
+	 * @param link
+	 *            路链
 	 * @return boolean
 	 */
 	public boolean isEqual(Link link) {

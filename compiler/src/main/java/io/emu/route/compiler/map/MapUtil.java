@@ -30,15 +30,17 @@ public class MapUtil {
 	/**
 	 * 按经纬度坐标查找该点所在的二级网格.
 	 * 
-	 * @param lon 经度
-	 * @param lat 维度
+	 * @param lon
+	 *            经度
+	 * @param lat
+	 *            维度
 	 * @return int 网格号
 	 */
 	public static int findGrid(double lon, double lat) {
-		int xx = ( int ) (lon - 60);
-		int yy = ( int ) (lat * 60 / 40);
-		int x = ( int ) ((lon - ( int ) lon) / 0.125);
-		int y = ( int ) (((lat * 60 / 40 - yy)) / 0.125);
+		int xx = (int) (lon - 60);
+		int yy = (int) (lat * 60 / 40);
+		int x = (int) ((lon - (int) lon) / 0.125);
+		int y = (int) (((lat * 60 / 40 - yy)) / 0.125);
 		return yy * 10000 + xx * 100 + y * 10 + x;
 
 	}
@@ -46,15 +48,16 @@ public class MapUtil {
 	/**
 	 * 按二级网格号获取二级网格的坐标范围.
 	 * 
-	 * @param gridNo 网格号
+	 * @param gridNo
+	 *            网格号
 	 * @return Envelope
 	 */
 	public static Envelope getGridBound(int gridNo) {
 
-		int yy = ( int ) (gridNo / 10000);
-		int xx = ( int ) ((gridNo - yy * 10000) / 100);
-		int y = ( int ) ((gridNo - yy * 10000 - xx * 100) / 10);
-		int x = ( int ) ((gridNo - yy * 10000 - xx * 100 - y * 10));
+		int yy = (int) (gridNo / 10000);
+		int xx = (int) ((gridNo - yy * 10000) / 100);
+		int y = (int) ((gridNo - yy * 10000 - xx * 100) / 10);
+		int x = (int) ((gridNo - yy * 10000 - xx * 100 - y * 10));
 
 		double miny = yy * 40.0 / 60 + y * 5.0 / 60;
 		double maxy = yy * 40.0 / 60 + (y + 1) * 5.0 / 60;
@@ -68,9 +71,12 @@ public class MapUtil {
 	/**
 	 * 按经纬度坐标查找点所在的二级网格和小网格.
 	 * 
-	 * @param lon 经度
-	 * @param lat 维度
-	 * @param cellSize 小网格边长
+	 * @param lon
+	 *            经度
+	 * @param lat
+	 *            维度
+	 * @param cellSize
+	 *            小网格边长
 	 * @return String 小网格id
 	 */
 	public static String findCell(double lon, double lat, int cellSize) {
@@ -94,8 +100,8 @@ public class MapUtil {
 		double xCellDelta = spanx / xCellSize;
 		double yCellDelta = spany / yCellSize;
 
-		int col = ( int ) ((lon - minx) / xCellDelta);
-		int row = ( int ) ((lat - miny) / yCellDelta);
+		int col = (int) ((lon - minx) / xCellDelta);
+		int row = (int) ((lat - miny) / yCellDelta);
 
 		return gridNo + "_" + col + "_" + row;
 
@@ -104,8 +110,10 @@ public class MapUtil {
 	/**
 	 * 根据经纬度得到小网格id.
 	 * 
-	 * @param lon 经度
-	 * @param lat 维度
+	 * @param lon
+	 *            经度
+	 * @param lat
+	 *            维度
 	 * @return 小网格id
 	 */
 	public static String findCell(double lon, double lat) {
@@ -115,7 +123,8 @@ public class MapUtil {
 	/**
 	 * 根据小网格id得到其范围.
 	 * 
-	 * @param cellID 小网格id
+	 * @param cellID
+	 *            小网格id
 	 * @return Envelope
 	 */
 	public static Envelope getCellBound(String cellID) {
@@ -125,8 +134,10 @@ public class MapUtil {
 	/**
 	 * 获取网格中每个小网格的范围.
 	 * 
-	 * @param cellID 小网格id
-	 * @param cellSize 小网格边长
+	 * @param cellID
+	 *            小网格id
+	 * @param cellSize
+	 *            小网格边长
 	 * @return Envelope
 	 */
 	public static Envelope getCellBound(String cellID, int cellSize) {
@@ -146,8 +157,8 @@ public class MapUtil {
 		double deltax = calPointDistance(minx, miny, maxx, miny);
 		double deltay = calPointDistance(minx, miny, minx, maxy);
 
-		int xsize = ( int ) Math.floor(deltax / cellSize);
-		long ysize = ( int ) Math.floor(deltay / cellSize);
+		int xsize = (int) Math.floor(deltax / cellSize);
+		long ysize = (int) Math.floor(deltay / cellSize);
 
 		double spanx = maxx - minx;
 		double spany = maxy - miny;
@@ -167,8 +178,10 @@ public class MapUtil {
 	/**
 	 * 获取方位角 方位角范围为-180< azimuth <=180 求两点之间的方位角.
 	 * 
-	 * @param sPoint start point
-	 * @param ePoint end point
+	 * @param sPoint
+	 *            start point
+	 * @param ePoint
+	 *            end point
 	 * @return double 方向角
 	 */
 	public static double azimuth(Coordinate sPoint, Coordinate ePoint) {
@@ -178,10 +191,14 @@ public class MapUtil {
 	/**
 	 * 获取方位角 方位角范围为-180< azimuth <=180 求两点之间的方位角.
 	 * 
-	 * @param lon1 前点经度
-	 * @param lat1 前点维度
-	 * @param lon2 后点经度
-	 * @param lat2 后点维度
+	 * @param lon1
+	 *            前点经度
+	 * @param lat1
+	 *            前点维度
+	 * @param lon2
+	 *            后点经度
+	 * @param lat2
+	 *            后点维度
 	 * @return double
 	 */
 	public static double azimuth(double lon1, double lat1, double lon2,
@@ -196,8 +213,10 @@ public class MapUtil {
 	/**
 	 * 两点之间的球面距离.
 	 * 
-	 * @param sp Coordinate
-	 * @param ep Coordinate
+	 * @param sp
+	 *            Coordinate
+	 * @param ep
+	 *            Coordinate
 	 * @return double 距离
 	 */
 	public static double calPointDistance(Coordinate sp, Coordinate ep) {
@@ -207,10 +226,14 @@ public class MapUtil {
 	/**
 	 * 两点之间的球面距离.
 	 * 
-	 * @param lng1 前点经度
-	 * @param lat1 前点维度
-	 * @param lng2 后点经度
-	 * @param lat2 后点维度
+	 * @param lng1
+	 *            前点经度
+	 * @param lat1
+	 *            前点维度
+	 * @param lng2
+	 *            后点经度
+	 * @param lat2
+	 *            后点维度
 	 * @return double
 	 */
 	public static double calPointDistance(double lng1, double lat1,
@@ -224,8 +247,10 @@ public class MapUtil {
 	/**
 	 * 点到线段的最近点.
 	 * 
-	 * @param p Coordinate
-	 * @param l LineSegment
+	 * @param p
+	 *            Coordinate
+	 * @param l
+	 *            LineSegment
 	 * @return Coordinate
 	 */
 	public static Coordinate closestPoint2LineSegment(Coordinate p,
@@ -236,8 +261,10 @@ public class MapUtil {
 	/**
 	 * JTS计算的两个几何体的最近点,返回后面那几何体到最近点.
 	 * 
-	 * @param p Geometry
-	 * @param l Geometry
+	 * @param p
+	 *            Geometry
+	 * @param l
+	 *            Geometry
 	 * @return Coordinate
 	 */
 	public static Coordinate closestPoint(Geometry p, Geometry l) {
@@ -249,8 +276,10 @@ public class MapUtil {
 	/**
 	 * JTS计算的点到折线的最近点.
 	 * 
-	 * @param p Coordinate
-	 * @param l LineString
+	 * @param p
+	 *            Coordinate
+	 * @param l
+	 *            LineString
 	 * @return Coordinate
 	 */
 	public static Coordinate closestPoint2LineString(Coordinate p, LineString l) {
@@ -263,8 +292,10 @@ public class MapUtil {
 	/**
 	 * JTS距离计算的点到折线的最近点.
 	 * 
-	 * @param p Coordinate
-	 * @param ml MultiLineString
+	 * @param p
+	 *            Coordinate
+	 * @param ml
+	 *            MultiLineString
 	 * @return Coordinate
 	 */
 	public static Coordinate closestPoint2MultiLineString(Coordinate p,
@@ -278,9 +309,11 @@ public class MapUtil {
 	/**
 	 * 解析数据，得到点序形状.
 	 * 
-	 * @param wktString 点序
+	 * @param wktString
+	 *            点序
 	 * @return Geometry 形状
-	 * @throws Exception 异常
+	 * @throws Exception
+	 *             异常
 	 */
 	public static Geometry parseWktString(String wktString) throws Exception {
 		int srid = 4326;
@@ -294,8 +327,10 @@ public class MapUtil {
 	/**
 	 * 生成point对象.
 	 * 
-	 * @param lon 经度
-	 * @param lat 维度
+	 * @param lon
+	 *            经度
+	 * @param lat
+	 *            维度
 	 * @return Point
 	 */
 	public static Point getPoint(double lon, double lat) {
@@ -306,7 +341,8 @@ public class MapUtil {
 	/**
 	 * 生成point对象.
 	 * 
-	 * @param p Coordinate
+	 * @param p
+	 *            Coordinate
 	 * @return Point
 	 */
 	public static Point getPoint(Coordinate p) {
@@ -316,7 +352,8 @@ public class MapUtil {
 	/**
 	 * 测试 .
 	 * 
-	 * @param args 参数
+	 * @param args
+	 *            参数
 	 */
 	public static void main(String[] args) {
 
@@ -337,10 +374,10 @@ public class MapUtil {
 		try {
 
 			Geometry geom1 = parseWktString(s1);
-			LineString ls = ( LineString ) geom1;
+			LineString ls = (LineString) geom1;
 
 			Geometry geom2 = parseWktString(s2);
-			MultiLineString ml = ( MultiLineString ) geom2;
+			MultiLineString ml = (MultiLineString) geom2;
 
 			// System.out.println(closestPoint2LineString1(new
 			// Coordinate(116.57677,40.25995),ls));

@@ -1,4 +1,3 @@
-
 package io.emu.route.compiler.neo4j;
 
 import java.util.ArrayList;
@@ -75,9 +74,14 @@ public class MyPath {
 	public String toString() {
 		String ls = "";
 		for (int i = 0; i < links.size(); i++) {
-			ls += ";" + links.get(i).getLinkid()+","+links.get(i).getLength();
+			ls += ";" + links.get(i).getLinkid() + ","
+					+ links.get(i).getLength();
 		}
-		return snode+","+enode + "#" +ls.substring(1) /**+ "\t" + cost + "\t" + links.size()*/;
+		return snode + "," + enode + "#" + ls.substring(1)/**
+		 * + "\t" + cost + "\t"
+		 * + links.size()
+		 */
+		;
 
 	}
 }

@@ -1,4 +1,3 @@
-
 package io.emu.route.compiler.lucene;
 
 import java.io.BufferedReader;

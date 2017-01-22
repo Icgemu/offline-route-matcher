@@ -1,4 +1,3 @@
-
 package io.emu.route.compiler.lucene;
 
 import java.io.BufferedReader;
@@ -95,7 +94,7 @@ public class CellRouteIndexer {
 				// }
 				iwriter.addDocument(doc);
 			}
-			//System.out.println("dupilicate:" + i);
+			// System.out.println("dupilicate:" + i);
 			bf.close();
 		}
 		iwriter.forceMerge(1);

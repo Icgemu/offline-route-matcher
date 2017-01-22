@@ -79,11 +79,11 @@ public class Mif_G_Compiler {
 		nIterator = ncollection.features();
 
 		while (nIterator.hasNext()) {
-			SimpleFeature feature = ( SimpleFeature ) nIterator.next();
+			SimpleFeature feature = (SimpleFeature) nIterator.next();
 			// 获取节点ID
-			Long id = Long.parseLong(( String ) feature.getAttribute("ID"));
+			Long id = Long.parseLong((String) feature.getAttribute("ID"));
 			// 获取邻接点ID
-			Long aid = Long.parseLong(( String ) feature
+			Long aid = Long.parseLong((String) feature
 					.getAttribute("Adjoin_NID"));
 			if (id < aid) {
 				// 取大值做ID
@@ -97,12 +97,17 @@ public class Mif_G_Compiler {
 
 	/**
 	 * 抽取节点信息，保存为N.csv文件（nodeOutCsvPath）.
-	 * @param inNodeShapePath node输入文件路径
-	 * @param nodeOutCsvPath node输出文件路径
-	 * @param rpNodeKV 边界nodeid对应表
-	 * @throws Exception 异常
+	 * 
+	 * @param inNodeShapePath
+	 *            node输入文件路径
+	 * @param nodeOutCsvPath
+	 *            node输出文件路径
+	 * @param rpNodeKV
+	 *            边界nodeid对应表
+	 * @throws Exception
+	 *             异常
 	 */
-	public static void processNode(String inNodeShapePath, 
+	public static void processNode(String inNodeShapePath,
 			String nodeOutCsvPath, HashMap<Long, Long> rpNodeKV)
 			throws Exception {
 
@@ -120,10 +125,10 @@ public class Mif_G_Compiler {
 		nIterator = ncollection.features();
 
 		while (nIterator.hasNext()) {
-			SimpleFeature feature = ( SimpleFeature ) nIterator.next();
+			SimpleFeature feature = (SimpleFeature) nIterator.next();
 			// 获取节点ID
-			Long id = Long.parseLong(( String ) feature.getAttribute("ID"));
-			String geometry = ( String ) feature.getDefaultGeometry().toString();
+			Long id = Long.parseLong((String) feature.getAttribute("ID"));
+			String geometry = (String) feature.getDefaultGeometry().toString();
 			// 如果为边界节点，统一id
 			if (rpNodeKV.containsKey(id)) {
 				id = rpNodeKV.get(id);
@@ -136,10 +141,15 @@ public class Mif_G_Compiler {
 
 	/**
 	 * 抽取道路信息.
-	 * @param inLinkShapePath link输入数据路径
-	 * @param outLinkCsvPath link输出数据路径
-	 * @param rpNodeKV 边界nodeid对应表
-	 * @throws Exception 异常
+	 * 
+	 * @param inLinkShapePath
+	 *            link输入数据路径
+	 * @param outLinkCsvPath
+	 *            link输出数据路径
+	 * @param rpNodeKV
+	 *            边界nodeid对应表
+	 * @throws Exception
+	 *             异常
 	 */
 	public static void processLink(String inLinkShapePath,
 			String outLinkCsvPath, HashMap<Long, Long> rpNodeKV)
@@ -150,16 +160,16 @@ public class Mif_G_Compiler {
 		widthKV.put("30", "7");
 		widthKV.put("55", "11");
 		widthKV.put("130", "15");
-//		// 根据代码设置限速信息
-//		HashMap<String, String> speedLimitKV = new HashMap<String, String>();
-//		speedLimitKV.put("00", "100");
-//		speedLimitKV.put("01", "80");
-//		speedLimitKV.put("02", "60");
-//		speedLimitKV.put("03", "60");
-//		speedLimitKV.put("04", "40");
-//		speedLimitKV.put("06", "30");
-//		speedLimitKV.put("08", "30");
-//		speedLimitKV.put("0a", "20");
+		// // 根据代码设置限速信息
+		// HashMap<String, String> speedLimitKV = new HashMap<String, String>();
+		// speedLimitKV.put("00", "100");
+		// speedLimitKV.put("01", "80");
+		// speedLimitKV.put("02", "60");
+		// speedLimitKV.put("03", "60");
+		// speedLimitKV.put("04", "40");
+		// speedLimitKV.put("06", "30");
+		// speedLimitKV.put("08", "30");
+		// speedLimitKV.put("0a", "20");
 
 		// 输出文件
 		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(
@@ -171,34 +181,35 @@ public class Mif_G_Compiler {
 		FeatureIterator linkIterator = linkcollection.features();
 
 		while (linkIterator.hasNext()) {
-			SimpleFeature feature = ( SimpleFeature ) linkIterator.next();
-			String id = ( String ) feature.getAttribute("ID");
-			String direction = ( String ) feature.getAttribute("Direction");
-			String kind = ( String ) feature.getAttribute("Kind");
-			String width = ( String ) feature.getAttribute("Width");
-			Integer length = ( int ) (Float.parseFloat(( String ) feature
+			SimpleFeature feature = (SimpleFeature) linkIterator.next();
+			String id = (String) feature.getAttribute("ID");
+			String direction = (String) feature.getAttribute("Direction");
+			String kind = (String) feature.getAttribute("Kind");
+			String width = (String) feature.getAttribute("Width");
+			Integer length = (int) (Float.parseFloat((String) feature
 					.getAttribute("Length")) * 1000);
-			String splmt = (String)feature.getAttribute("SpdLmtS2E");
-			String  speed = "".equalsIgnoreCase(splmt)?(String)feature.getAttribute("SpdLmtE2S"):splmt;
-			//feature.getAttribute("SpdLmtE2S");
-			Integer SpdLmtS2E = ( int ) (Integer.parseInt(speed) /10);
-			
-			String geometry = ( String ) feature.getDefaultGeometry().toString();
+			String splmt = (String) feature.getAttribute("SpdLmtS2E");
+			String speed = "".equalsIgnoreCase(splmt) ? (String) feature
+					.getAttribute("SpdLmtE2S") : splmt;
+			// feature.getAttribute("SpdLmtE2S");
+			Integer SpdLmtS2E = (int) (Integer.parseInt(speed) / 10);
 
-//			// 去掉08道路等级,如需保留去掉此行
-//			if ((kind.substring(0, 2)).equalsIgnoreCase("08")) {
-//				continue;
-//			}
+			String geometry = (String) feature.getDefaultGeometry().toString();
 
-			Long snode = Long.parseLong(( String ) feature
+			// // 去掉08道路等级,如需保留去掉此行
+			// if ((kind.substring(0, 2)).equalsIgnoreCase("08")) {
+			// continue;
+			// }
+
+			Long snode = Long.parseLong((String) feature
 					.getAttribute("SnodeID"));
-			Long enode = Long.parseLong(( String ) feature
+			Long enode = Long.parseLong((String) feature
 					.getAttribute("EnodeID"));
 
 			width = widthKV.get(width);
 
-			//String speedlimit = speedLimitKV.get(kind.substring(0, 2));
-			String speedlimit = SpdLmtS2E+"";
+			// String speedlimit = speedLimitKV.get(kind.substring(0, 2));
+			String speedlimit = SpdLmtS2E + "";
 			String roadclass = "0x" + kind.substring(0, 2);
 			String roadtype = "0x" + kind.substring(2, 4);
 			String orientation = direction;
@@ -214,15 +225,15 @@ public class Mif_G_Compiler {
 			// 方向为0或1表示双向路链，需要生成反向路链
 			if (direction.equalsIgnoreCase("0")
 					|| direction.equalsIgnoreCase("1")) {
-				//orientation = "0";
+				// orientation = "0";
 				out.println(id + ":" + snode + ":" + enode + ":" + orientation
 						+ ":" + roadclass + ":" + roadtype + ":" + width + ":"
 						+ length + ":" + speedlimit + ":" + geometry);
 
 				// 双向通行,计算反向ID
-				//String rid = id.substring(0, 6) + "1" + id.substring(6, 11);
-				String rid = "-"+id;
-				//orientation = "1";
+				// String rid = id.substring(0, 6) + "1" + id.substring(6, 11);
+				String rid = "-" + id;
+				// orientation = "1";
 				Geometry geom = MapUtil.parseWktString(geometry);
 				// 得到反向路链形状
 				String reverseGeometry = geom.reverse().toString();
@@ -235,7 +246,7 @@ public class Mif_G_Compiler {
 				Geometry geom = MapUtil.parseWktString(geometry);
 				// 得到反向路链形状
 				String reverseGeometry = geom.reverse().toString();
-				//orientation = "1";
+				// orientation = "1";
 				out.println(id + ":" + enode + ":" + snode + ":" + orientation
 						+ ":" + roadclass + ":" + roadtype + ":" + width + ":"
 						+ length + ":" + speedlimit + ":" + reverseGeometry);
@@ -243,7 +254,7 @@ public class Mif_G_Compiler {
 
 			// 方向为2表示画线方向与道路通行方向相同
 			if (direction.equalsIgnoreCase("2")) {
-				//orientation = "0";
+				// orientation = "0";
 				out.println(id + ":" + snode + ":" + enode + ":" + orientation
 						+ ":" + roadclass + ":" + roadtype + ":" + width + ":"
 						+ length + ":" + speedlimit + ":" + geometry);
@@ -255,9 +266,13 @@ public class Mif_G_Compiler {
 
 	/**
 	 * 小网格化地图.
-	 * @param inLinkShapePath link输入数据路径
-	 * @param cellOutCsvPath 小网格输出文件路径
-	 * @throws Exception 异常
+	 * 
+	 * @param inLinkShapePath
+	 *            link输入数据路径
+	 * @param cellOutCsvPath
+	 *            小网格输出文件路径
+	 * @throws Exception
+	 *             异常
 	 */
 	public static void tileGrid(String inLinkShapePath, String cellOutCsvPath)
 			throws Exception {
@@ -266,11 +281,17 @@ public class Mif_G_Compiler {
 
 	/**
 	 * 按网格切割地图，生成各小网格包含的路链id集合.
-	 * @param inLinkShapePath link输入数据路径
-	 * @param cellOutCsvPath 小网格输出路径
-	 * @param csize 小网格边长
-	 * @param cellType 小网格类型，1表示只保存路链id，2表示保存路链信息
-	 * @throws Exception 异常
+	 * 
+	 * @param inLinkShapePath
+	 *            link输入数据路径
+	 * @param cellOutCsvPath
+	 *            小网格输出路径
+	 * @param csize
+	 *            小网格边长
+	 * @param cellType
+	 *            小网格类型，1表示只保存路链id，2表示保存路链信息
+	 * @throws Exception
+	 *             异常
 	 */
 	public static void tileGrid(String inLinkShapePath, String cellOutCsvPath,
 			int csize, int cellType) throws Exception {
@@ -286,8 +307,8 @@ public class Mif_G_Compiler {
 		FeatureCollection collection = linkFeatureSource.getFeatures();
 		FeatureIterator iterator = collection.features();
 		while (iterator.hasNext()) {
-			SimpleFeature feature = ( SimpleFeature ) iterator.next();
-			String gridID = ( String ) feature.getAttribute("MapID");
+			SimpleFeature feature = (SimpleFeature) iterator.next();
+			String gridID = (String) feature.getAttribute("MapID");
 			if (!gridMap.containsKey(gridID)) {
 				gridMap.put(gridID, Integer.parseInt(gridID));
 			}
@@ -296,7 +317,7 @@ public class Mif_G_Compiler {
 		// 按网格集合循环选择link
 		Iterator itor = gridMap.entrySet().iterator();
 		while (itor.hasNext()) {
-			Map.Entry<String, Integer> entry = ( Map.Entry<String, Integer> ) itor
+			Map.Entry<String, Integer> entry = (Map.Entry<String, Integer>) itor
 					.next();
 			int gridNo = entry.getValue();
 			// 生成小网格信息
@@ -305,7 +326,7 @@ public class Mif_G_Compiler {
 
 			Iterator iteratorCkv = cellKV.entrySet().iterator();
 			while (iteratorCkv.hasNext()) {
-				Map.Entry<String, StringBuffer> e = ( Map.Entry<String, StringBuffer> ) iteratorCkv
+				Map.Entry<String, StringBuffer> e = (Map.Entry<String, StringBuffer>) iteratorCkv
 						.next();
 				out.println(e.getKey() + ":" + e.getValue());
 			}
@@ -316,11 +337,17 @@ public class Mif_G_Compiler {
 
 	/**
 	 * 生成小网格包含的路链集合.
-	 * @param gridNo 网格号           
-	 * @param linkFeatureSource link的shape  
-	 * @param cellSize 小网格边长
-	 * @param cellType 小网格类型，1表示只保存路链id，2表示保存路链信息        
-	 * @throws Exception 异常
+	 * 
+	 * @param gridNo
+	 *            网格号
+	 * @param linkFeatureSource
+	 *            link的shape
+	 * @param cellSize
+	 *            小网格边长
+	 * @param cellType
+	 *            小网格类型，1表示只保存路链id，2表示保存路链信息
+	 * @throws Exception
+	 *             异常
 	 * @return HashMap<String, StringBuffer> 小网格信息
 	 */
 	private static HashMap<String, StringBuffer> tileCell(Integer gridNo,
@@ -340,8 +367,8 @@ public class Mif_G_Compiler {
 		double deltax = MapUtil.calPointDistance(minx, miny, maxx, miny);
 		double deltay = MapUtil.calPointDistance(minx, miny, minx, maxy);
 
-		int xsize = ( int ) Math.floor(deltax / cellSize);
-		long ysize = ( int ) Math.floor(deltay / cellSize);
+		int xsize = (int) Math.floor(deltax / cellSize);
+		long ysize = (int) Math.floor(deltay / cellSize);
 
 		double spanx = maxx - minx;
 		double spany = maxy - miny;
@@ -350,7 +377,8 @@ public class Mif_G_Compiler {
 		double cydelta = spany / ysize;
 
 		// 生成小网格范围
-		setCellPolygonKV(xsize, ysize, minx, cxdelta, cydelta, miny, cellPolygonKV, gridNo);
+		setCellPolygonKV(xsize, ysize, minx, cxdelta, cydelta, miny,
+				cellPolygonKV, gridNo);
 
 		// 参与计算的范围
 		double bminx = minx - 0.0002;
@@ -365,22 +393,22 @@ public class Mif_G_Compiler {
 		FeatureIterator iterator = collection.features();
 
 		while (iterator.hasNext()) {
-			SimpleFeature feature = ( SimpleFeature ) iterator.next();
+			SimpleFeature feature = (SimpleFeature) iterator.next();
 
-			String kind = ( String ) feature.getAttribute("Kind");
+			String kind = (String) feature.getAttribute("Kind");
 
-//			if ((kind.substring(0, 2)).equalsIgnoreCase("08")) {
-//				// 去掉08道路等级,如需保留去掉此行
-//				continue;
-//			}
+			// if ((kind.substring(0, 2)).equalsIgnoreCase("08")) {
+			// // 去掉08道路等级,如需保留去掉此行
+			// continue;
+			// }
 
 			// 获取路链坐标
-			Geometry geom = ( Geometry ) feature.getDefaultGeometry();
+			Geometry geom = (Geometry) feature.getDefaultGeometry();
 
 			Iterator cellPolygonIterator = cellPolygonKV.entrySet().iterator();
 			while (cellPolygonIterator.hasNext()) {
 
-				Map.Entry<String, Polygon> entry = ( Map.Entry<String, Polygon> ) cellPolygonIterator
+				Map.Entry<String, Polygon> entry = (Map.Entry<String, Polygon>) cellPolygonIterator
 						.next();
 				String id = entry.getKey();
 				Polygon polygon = entry.getValue();
@@ -390,20 +418,20 @@ public class Mif_G_Compiler {
 					Geometry gs = geom.intersection(polygon);
 					if (outCellKV.containsKey(id)) {
 						StringBuffer sb = outCellKV.get(id);
-						String linkid = ( String ) feature.getAttribute("ID");
-						String direction = ( String ) feature
+						String linkid = (String) feature.getAttribute("ID");
+						String direction = (String) feature
 								.getAttribute("Direction");
 
-						//保存路链到cell中
+						// 保存路链到cell中
 						saveLink2Cell(cellType, linkid, sb, direction, gs);
 
 					} else {
 						StringBuffer sb = new StringBuffer();
-						String linkid = ( String ) feature.getAttribute("ID");
-						String direction = ( String ) feature
+						String linkid = (String) feature.getAttribute("ID");
+						String direction = (String) feature
 								.getAttribute("Direction");
 
-						//保存路链到cell中
+						// 保存路链到cell中
 						saveLink2Cell(cellType, linkid, sb, direction, gs);
 						outCellKV.put(id, sb);
 					}
@@ -413,15 +441,22 @@ public class Mif_G_Compiler {
 		return outCellKV;
 	}
 
-	/** 
+	/**
 	 * 保存路链到cell中.
-	 * @param cellType 小网格类型
-	 * @param linkid linkid
-	 * @param sb 路链id集合
-	 * @param direction 方向
-	 * @param gs 点序
+	 * 
+	 * @param cellType
+	 *            小网格类型
+	 * @param linkid
+	 *            linkid
+	 * @param sb
+	 *            路链id集合
+	 * @param direction
+	 *            方向
+	 * @param gs
+	 *            点序
 	 */
-	private static void saveLink2Cell(int cellType, String linkid, StringBuffer sb, String direction, Geometry gs) {
+	private static void saveLink2Cell(int cellType, String linkid,
+			StringBuffer sb, String direction, Geometry gs) {
 		// TODO Auto-generated method stub
 		// cellType表示两种保存方式，1表示只保存linkid，2表示保存link信息
 		if (cellType == 1) {
@@ -429,47 +464,59 @@ public class Mif_G_Compiler {
 			sb.append(",").append(linkid);
 			if (direction.equalsIgnoreCase("0")
 					|| direction.equalsIgnoreCase("1")) {
-//				sb.append(",").append(
-//						linkid.substring(0, 6) + "1"
-//								+ linkid.substring(6, 11));
-				sb.append(",").append("-"+linkid);
+				// sb.append(",").append(
+				// linkid.substring(0, 6) + "1"
+				// + linkid.substring(6, 11));
+				sb.append(",").append("-" + linkid);
 			}
 		} else if (cellType == 2) {
 			// cell2
-			sb.append(":").append(linkid).append("_")
-					.append(gs.toString());
+			sb.append(":").append(linkid).append("_").append(gs.toString());
 			if (direction.equalsIgnoreCase("0")
 					|| direction.equalsIgnoreCase("1")) {
 				sb.append(":")
-//						.append(linkid.substring(0, 6) + "1"
-//								+ linkid.substring(6, 11))
-				.append("-"+linkid)
-						.append("_")
+						// .append(linkid.substring(0, 6) + "1"
+						// + linkid.substring(6, 11))
+						.append("-" + linkid).append("_")
 						.append(gs.reverse().toString());
 			}
 		}
 	}
 
-	/** 
+	/**
 	 * 生成小网格范围.
-	 * @param xsize xsize
-	 * @param ysize ysize
-	 * @param minx minx
-	 * @param cxdelta cxdelta
-	 * @param cydelta cydelta
-	 * @param miny miny
-	 * @param cellPolygonKV cellPolygonKV
-	 * @param gridNo gridNo
+	 * 
+	 * @param xsize
+	 *            xsize
+	 * @param ysize
+	 *            ysize
+	 * @param minx
+	 *            minx
+	 * @param cxdelta
+	 *            cxdelta
+	 * @param cydelta
+	 *            cydelta
+	 * @param miny
+	 *            miny
+	 * @param cellPolygonKV
+	 *            cellPolygonKV
+	 * @param gridNo
+	 *            gridNo
 	 */
-	private static void setCellPolygonKV(int xsize, long ysize, double minx, 
-			double cxdelta, double cydelta, double miny, HashMap<String, Polygon> cellPolygonKV, Integer gridNo) {
+	private static void setCellPolygonKV(int xsize, long ysize, double minx,
+			double cxdelta, double cydelta, double miny,
+			HashMap<String, Polygon> cellPolygonKV, Integer gridNo) {
 		// TODO Auto-generated method stub
 		for (int m = 0; m < xsize; m++) {
 			for (int n = 0; n < ysize; n++) {
-				double cminx = minx + cxdelta * m - cxdelta*60.0/MapUtil.DEFAULT_CELL_SIZE;
-				double cminy = miny + cydelta * n - cydelta*60.0/MapUtil.DEFAULT_CELL_SIZE;
-				double cmaxx = minx + cxdelta * (m + 1) + cxdelta*60.0/MapUtil.DEFAULT_CELL_SIZE;
-				double cmaxy = miny + cydelta * (n + 1) + cydelta*60.0/MapUtil.DEFAULT_CELL_SIZE;
+				double cminx = minx + cxdelta * m - cxdelta * 60.0
+						/ MapUtil.DEFAULT_CELL_SIZE;
+				double cminy = miny + cydelta * n - cydelta * 60.0
+						/ MapUtil.DEFAULT_CELL_SIZE;
+				double cmaxx = minx + cxdelta * (m + 1) + cxdelta * 60.0
+						/ MapUtil.DEFAULT_CELL_SIZE;
+				double cmaxy = miny + cydelta * (n + 1) + cydelta * 60.0
+						/ MapUtil.DEFAULT_CELL_SIZE;
 				Coordinate[] points = new Coordinate[] {
 						new Coordinate(cminx, cminy),
 						new Coordinate(cmaxx, cminy),
@@ -521,9 +568,10 @@ public class Mif_G_Compiler {
 	}
 
 	/**
-	 * 单省份编译入口.
-	 * TODO(功能描述)
-	 * @param args 参数
+	 * 单省份编译入口. TODO(功能描述)
+	 * 
+	 * @param args
+	 *            参数
 	 */
 	public static void main(String[] args) {
 		try {
@@ -534,11 +582,9 @@ public class Mif_G_Compiler {
 			// processRoadTopology("/home/hadoop/Downloads/shp/R.csv","/home/hadoop/Downloads/shp/T.csv");
 			// tileGrid("/home/hadoop/Downloads/shp/R.shp","/home/hadoop/Downloads/shp/C.csv");
 
-			processMap(
-					"F:/beijing/level2/beijing/road/Nbeijing.shp",
+			processMap("F:/beijing/level2/beijing/road/Nbeijing.shp",
 					"F:/beijing/level2/beijing/road/Rbeijing.shp",
-					"E:/Prj/OD/test/N-G.csv",
-					"E:/Prj/OD/test/R-G.csv",
+					"E:/Prj/OD/test/N-G.csv", "E:/Prj/OD/test/R-G.csv",
 					"E:/Prj/OD/test/C-60-G.csv");
 
 		} catch (Exception e) {

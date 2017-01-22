@@ -1,4 +1,3 @@
-
 package io.emu.route.compiler.lucene;
 
 import java.io.BufferedReader;
@@ -103,32 +102,32 @@ public class RouteTreeIndexer {
 			public int compare(String o1, String o2) {
 				// TODO Auto-generated method stub
 				int rst = 0;
-				try{
-				int a1 = Integer.parseInt(o1.split(",")[4]);
-				int a2 = Integer.parseInt(o2.split(",")[4]);
+				try {
+					int a1 = Integer.parseInt(o1.split(",")[4]);
+					int a2 = Integer.parseInt(o2.split(",")[4]);
 
-				if (a1 == a2)
-					rst = 0;
-				if (a1 > a2)
-					rst = 1;
-				rst = -1;
-				}catch (Exception e){
-					
+					if (a1 == a2)
+						rst = 0;
+					if (a1 > a2)
+						rst = 1;
+					rst = -1;
+				} catch (Exception e) {
+
 					System.out.println(o1);
 					System.out.println(o2);
 					System.out.println("-------");
 				}
-				return rst ;
+				return rst;
 			}
 
-		});		
+		});
 		String head = "";
 		for (String l : str) {
 			head += ";" + l.substring(0, l.lastIndexOf(","));
 		}
 
 		wt.write(id + "#" + head.substring(1) + "\n");
-		
+
 	}
 
 	static void index2(String in, String out) throws Exception {
@@ -224,20 +223,20 @@ public class RouteTreeIndexer {
 			public int compare(String o1, String o2) {
 				// TODO Auto-generated method stub
 				int rst = 0;
-				try{
-				int a1 = Integer.parseInt(o1.split(",")[4]);
-				int a2 = Integer.parseInt(o2.split(",")[4]);
+				try {
+					int a1 = Integer.parseInt(o1.split(",")[4]);
+					int a2 = Integer.parseInt(o2.split(",")[4]);
 
-				if (a1 == a2)
-					rst = 0;
-				if (a1 > a2)
-					rst = 1;
-				rst = -1;
-				}catch (Exception e){
+					if (a1 == a2)
+						rst = 0;
+					if (a1 > a2)
+						rst = 1;
+					rst = -1;
+				} catch (Exception e) {
 					System.out.println(o1);
 					System.out.println(o2);
 				}
-				return rst ;
+				return rst;
 			}
 
 		});
@@ -289,11 +288,11 @@ public class RouteTreeIndexer {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		String in = "E:/Prj/OD/test/my-route-0.csv";
-	    String out = "E:/Prj/OD/test/mm-db-rt-tree";
-	    int type = 2;
-		//String in = args[0];
-		//String out = args[1];
-		//int type = Integer.parseInt(args[2]);
+		String out = "E:/Prj/OD/test/mm-db-rt-tree";
+		int type = 2;
+		// String in = args[0];
+		// String out = args[1];
+		// int type = Integer.parseInt(args[2]);
 		if (type == 1) {// 写到lucene
 			index2(in, out);
 		} else {// 写到文件

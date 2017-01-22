@@ -18,9 +18,11 @@ public class ParseUtil {
 	/**
 	 * 解析link数据，生成Node对象.
 	 * 
-	 * @param line 数据
+	 * @param line
+	 *            数据
 	 * @return Link
-	 * @throws Exception 异常
+	 * @throws Exception
+	 *             异常
 	 */
 	public static Link parseLinkLine(String line) throws Exception {
 		String[] s = line.split(":");
@@ -42,8 +44,8 @@ public class ParseUtil {
 		LineString ln = null;
 
 		if (geometry.getGeometryType().equalsIgnoreCase("MultiLineString")) {
-			MultiLineString mln = ( MultiLineString ) geometry;
-			ln = ( LineString ) mln.getGeometryN(0);
+			MultiLineString mln = (MultiLineString) geometry;
+			ln = (LineString) mln.getGeometryN(0);
 		}
 
 		return new Link(id + "", snodeid + "", enodeid + "", orientation,
@@ -53,24 +55,28 @@ public class ParseUtil {
 	/**
 	 * 解析node数据，生成Node对象.
 	 * 
-	 * @param line 数据
+	 * @param line
+	 *            数据
 	 * @return Node
-	 * @throws Exception 异常
+	 * @throws Exception
+	 *             异常
 	 */
 	public static Node parseNodeLine(String line) throws Exception {
 		String[] s = line.split(":");
 		Long id = Long.parseLong(s[0]);
 		Geometry geometry = MapUtil.parseWktString(s[1]);
-		Point point = ( Point ) geometry;
+		Point point = (Point) geometry;
 		return new Node(id + "", point);
 	}
 
 	/**
 	 * 解析cell数据，生成Cell对象.
 	 * 
-	 * @param line 数据
+	 * @param line
+	 *            数据
 	 * @return Cell
-	 * @throws Exception 异常
+	 * @throws Exception
+	 *             异常
 	 */
 	public static Cell parseCellLine(String line) throws Exception {
 		String[] s = line.split(":");

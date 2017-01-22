@@ -25,9 +25,13 @@ public class Node implements Serializable {
 
 	/**
 	 * 构造函数.
-	 * @param id nodeid
-	 * @param lon 经度
-	 * @param lat 维度
+	 * 
+	 * @param id
+	 *            nodeid
+	 * @param lon
+	 *            经度
+	 * @param lat
+	 *            维度
 	 */
 	public Node(String id, double lon, double lat) {
 		init(id, new Coordinate(lon, lat));
@@ -35,8 +39,11 @@ public class Node implements Serializable {
 
 	/**
 	 * 构造函数.
-	 * @param id nodeid
-	 * @param cs Coordinate
+	 * 
+	 * @param id
+	 *            nodeid
+	 * @param cs
+	 *            Coordinate
 	 */
 	public Node(String id, Coordinate cs) {
 		init(id, cs);
@@ -44,8 +51,11 @@ public class Node implements Serializable {
 
 	/**
 	 * 构造函数.
-	 * @param id nodeid
-	 * @param point Point
+	 * 
+	 * @param id
+	 *            nodeid
+	 * @param point
+	 *            Point
 	 */
 	public Node(String id, Point point) {
 		this.point = point;
@@ -54,8 +64,11 @@ public class Node implements Serializable {
 
 	/**
 	 * 初始化.
-	 * @param id nodeid
-	 * @param cs Coordinate
+	 * 
+	 * @param id
+	 *            nodeid
+	 * @param cs
+	 *            Coordinate
 	 */
 	private void init(String id, Coordinate cs) {
 		this.id = id;
@@ -64,6 +77,7 @@ public class Node implements Serializable {
 
 	/**
 	 * 得到精度.
+	 * 
 	 * @return double
 	 */
 	public double getLon() {
@@ -72,6 +86,7 @@ public class Node implements Serializable {
 
 	/**
 	 * 得到维度.
+	 * 
 	 * @return double
 	 */
 	public double getLat() {
@@ -80,6 +95,7 @@ public class Node implements Serializable {
 
 	/**
 	 * 得到id.
+	 * 
 	 * @return String
 	 */
 	public String getId() {
@@ -88,7 +104,9 @@ public class Node implements Serializable {
 
 	/**
 	 * 判断node是否相等.
-	 * @param node Node
+	 * 
+	 * @param node
+	 *            Node
 	 * @return boolean
 	 */
 	public boolean isEqual(Node node) {

@@ -1,4 +1,3 @@
-
 package io.emu.route.compiler.neo4j;
 
 import java.io.BufferedWriter;
@@ -44,7 +43,7 @@ public class Writer implements Runnable {
 				while ((p = queue.poll(30, TimeUnit.SECONDS)) != null
 						&& p != null) {
 					bw.write(p + "\n");
-					//System.out.println(p);
+					// System.out.println(p);
 				}
 				System.out.println("Done");
 			} catch (InterruptedException e) {

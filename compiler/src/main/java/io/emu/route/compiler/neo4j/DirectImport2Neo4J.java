@@ -29,14 +29,17 @@ public class DirectImport2Neo4J {
 
 	/**
 	 * 连接neo4j写入node.
-	 * @param nodes node数据集合
-	 * @param neo4jDbPath neo4j数据库路径
+	 * 
+	 * @param nodes
+	 *            node数据集合
+	 * @param neo4jDbPath
+	 *            neo4j数据库路径
 	 */
-	private static void saveNode(ArrayList<io.emu.route.compiler.map.Node> nodes,
-			String neo4jDbPath) {
+	private static void saveNode(
+			ArrayList<io.emu.route.compiler.map.Node> nodes, String neo4jDbPath) {
 
 		HashMap<String, String> configuration = new HashMap<String, String>();
-		//数据库保存参数
+		// 数据库保存参数
 		configuration.put("use_memory_mapped_buffers", "true");
 		configuration.put("neostore.nodestore.db.mapped_memory", "64M");
 		configuration
@@ -50,10 +53,9 @@ public class DirectImport2Neo4J {
 		configuration.put("relationship_cache_size", "256M");
 		GraphDatabaseService graphDb = new GraphDatabaseFactory()
 				.newEmbeddedDatabaseBuilder(new File(neo4jDbPath))
-				.setConfig(configuration)
-				.newGraphDatabase();
-//		new EmbeddedGraphDatabase(neo4jDbPath,
-//				configuration);
+				.setConfig(configuration).newGraphDatabase();
+		// new EmbeddedGraphDatabase(neo4jDbPath,
+		// configuration);
 
 		IndexManager index = graphDb.index();
 		// 以nodeid作为索引
@@ -78,44 +80,51 @@ public class DirectImport2Neo4J {
 	/**
 	 * 将解析得到的node信息导入neo4j.
 	 * 
-	 * @param nodeCsvPath node信息保存文件
-	 * @param neo4jDbPath neo4j 数据库路径
-	 * @throws Exception 异常
+	 * @param nodeCsvPath
+	 *            node信息保存文件
+	 * @param neo4jDbPath
+	 *            neo4j 数据库路径
+	 * @throws Exception
+	 *             异常
 	 */
 	public static synchronized void importNode(String nodeCsvPath,
 			String neo4jDbPath) throws Exception {
 		ArrayList<io.emu.route.compiler.map.Node> nodes = new ArrayList<io.emu.route.compiler.map.Node>();
 		// 用于去除重复的node
-		//HashMap<String, String> nkv = new HashMap<String, String>();
+		// HashMap<String, String> nkv = new HashMap<String, String>();
 		File file = new File(nodeCsvPath);
 		BufferedReader bf = new BufferedReader(new FileReader(file));
 		String line = null;
 		while ((line = bf.readLine()) != null) {
-			io.emu.route.compiler.map.Node cnNode = ParseUtil.parseNodeLine(line);
+			io.emu.route.compiler.map.Node cnNode = ParseUtil
+					.parseNodeLine(line);
 			// 去除重复点
-			//if (!nkv.containsKey(cnNode.getId())) {
-				nodes.add(cnNode);
-				//nkv.put(cnNode.getId(), cnNode.getId());
-			//}
-			if(nodes.size()%10000 == 0){
+			// if (!nkv.containsKey(cnNode.getId())) {
+			nodes.add(cnNode);
+			// nkv.put(cnNode.getId(), cnNode.getId());
+			// }
+			if (nodes.size() % 10000 == 0) {
 				saveNode(nodes, neo4jDbPath);
 				nodes.clear();
 			}
 		}
 		// 将Node写入neo4j
 		saveNode(nodes, neo4jDbPath);
-		
+
 		bf.close();
 	}
 
 	/**
 	 * 连接neo4j写入link.
-	 * @param links link数据集合
-	 * @param neo4jDbPath neo4j数据库路径
+	 * 
+	 * @param links
+	 *            link数据集合
+	 * @param neo4jDbPath
+	 *            neo4j数据库路径
 	 */
 	private static void saveLink(ArrayList<Link> links, String neo4jDbPath) {
 		HashMap<String, String> configuration = new HashMap<String, String>();
-		//数据库链接参数
+		// 数据库链接参数
 		configuration.put("use_memory_mapped_buffers", "true");
 		configuration.put("neostore.nodestore.db.mapped_memory", "64M");
 		configuration
@@ -128,9 +137,8 @@ public class DirectImport2Neo4J {
 		configuration.put("node_cache_size", "64M");
 		configuration.put("relationship_cache_size", "256M");
 		GraphDatabaseService graphDb = new GraphDatabaseFactory()
-			.newEmbeddedDatabaseBuilder(new File(neo4jDbPath))
-			.setConfig(configuration)
-			.newGraphDatabase();
+				.newEmbeddedDatabaseBuilder(new File(neo4jDbPath))
+				.setConfig(configuration).newGraphDatabase();
 
 		IndexManager index = graphDb.index();
 		Index<Node> nodeIndex = index.forNodes("nodeid");
@@ -158,7 +166,7 @@ public class DirectImport2Neo4J {
 				relationIndex.add(road, "linkid", road.getProperty("linkid"));
 			}
 			tx.success();
-		
+
 		} finally {
 			tx.close();
 		}
@@ -168,15 +176,18 @@ public class DirectImport2Neo4J {
 	/**
 	 * 将解析得到的link信息导入neo4j.
 	 * 
-	 * @param linkCsvPath link写入文件路径
-	 * @param neo4jDbPath neo4j数据库路径
-	 * @throws Exception 异常
+	 * @param linkCsvPath
+	 *            link写入文件路径
+	 * @param neo4jDbPath
+	 *            neo4j数据库路径
+	 * @throws Exception
+	 *             异常
 	 */
 	public static synchronized void importLink(String linkCsvPath,
 			String neo4jDbPath) throws Exception {
 		ArrayList<Link> links = new ArrayList<Link>();
 		// 用以去除重复link
-		//HashMap<String, String> rkv = new HashMap<String, String>();
+		// HashMap<String, String> rkv = new HashMap<String, String>();
 		BufferedReader bf = new BufferedReader(new FileReader(new File(
 				linkCsvPath)));
 		String line = null;
@@ -184,11 +195,11 @@ public class DirectImport2Neo4J {
 		while ((line = bf.readLine()) != null) {
 			Link link = ParseUtil.parseLinkLine(line);
 			// 去除重复link
-			//if (!rkv.containsKey(link.getId())) {
-				links.add(link);
-				//rkv.put(link.getId(), link.getId());
-			//}
-			if(links.size()%10000 ==0){
+			// if (!rkv.containsKey(link.getId())) {
+			links.add(link);
+			// rkv.put(link.getId(), link.getId());
+			// }
+			if (links.size() % 10000 == 0) {
 				saveLink(links, neo4jDbPath);
 				links.clear();
 			}
@@ -201,20 +212,20 @@ public class DirectImport2Neo4J {
 	/**
 	 * 分省份保存后的csv文件合成一个大文件，调用import接口在neo4j中生成全国路网拓扑.
 	 * 
-	 * @param args 参数
-	 * @throws URISyntaxException URISyntaxException
+	 * @param args
+	 *            参数
+	 * @throws URISyntaxException
+	 *             URISyntaxException
 	 */
 	public static void main(String[] args) throws URISyntaxException {
 
 		/*****************************************************/
 
 		try {
-//			importNode("/home/hadoop/Downloads/csv1.3/N.csv",
-//					"/home/hadoop/Downloads/csv1.3/neo4j-db");
-			importNode("E:/Prj/OD/test/uN-G.csv",
-			"E:/Prj/OD/test/neo4j-db-G/");
-			importLink("E:/Prj/OD/test/R-G.csv",
-					"E:/Prj/OD/test/neo4j-db-G/");
+			// importNode("/home/hadoop/Downloads/csv1.3/N.csv",
+			// "/home/hadoop/Downloads/csv1.3/neo4j-db");
+			importNode("E:/Prj/OD/test/uN-G.csv", "E:/Prj/OD/test/neo4j-db-G/");
+			importLink("E:/Prj/OD/test/R-G.csv", "E:/Prj/OD/test/neo4j-db-G/");
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
