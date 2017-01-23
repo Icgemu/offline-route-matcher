@@ -1,5 +1,7 @@
 package io.emu.route.compiler.neo4j;
 
+import io.emu.route.compiler.map.Link;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class MyPath {
 	int cost;
 	String snode;
 	String enode;
-	List<LinkMB> links = new ArrayList<LinkMB>();
+	List<Link> links = new ArrayList<Link>();
 
 	/**
 	 * 构造函数
@@ -62,11 +64,11 @@ public class MyPath {
 		this.enode = enode;
 	}
 
-	void addLink(LinkMB link) {
+	void addLink(Link link) {
 		this.links.add(link);
 	}
 
-	List<LinkMB> getLinks() {
+	List<Link> getLinks() {
 		return this.links;
 	}
 
@@ -74,7 +76,7 @@ public class MyPath {
 	public String toString() {
 		String ls = "";
 		for (int i = 0; i < links.size(); i++) {
-			ls += ";" + links.get(i).getLinkid() + ","
+			ls += ";" + links.get(i).getId() + ","
 					+ links.get(i).getLength();
 		}
 		return snode + "," + enode + "#" + ls.substring(1)/**

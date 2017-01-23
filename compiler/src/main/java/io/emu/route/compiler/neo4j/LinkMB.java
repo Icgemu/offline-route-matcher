@@ -1,11 +1,5 @@
 package io.emu.route.compiler.neo4j;
 
-/**
- * TODO(这里用一句话描述这个类的作用)
- * 
- * @author Administrator
- * @version 2014年2月23日 上午12:42:11
- */
 public class LinkMB {
 
 	String linkid;

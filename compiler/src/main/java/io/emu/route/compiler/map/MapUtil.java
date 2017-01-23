@@ -14,18 +14,12 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.io.WKTReader;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 
-/**
- * 地图操作工具类，提供地图操作的各种方法.
- * 
- * @author Ray
- * @version 2013-10-14 下午3:59:15
- */
 public class MapUtil {
 	/**
 	 * 小网格边长，60m.
 	 */
 	public final static int DEFAULT_CELL_SIZE = 60;
-	public final static GeometryFactory  geoFactory = new GeometryFactory(new PrecisionModel(),4326);
+	public final static GeometryFactory  GEO_FACTORY = new GeometryFactory(new PrecisionModel(),4326);
 
 	/**
 	 * 按经纬度坐标查找该点所在的二级网格.
@@ -284,7 +278,7 @@ public class MapUtil {
 	 */
 	public static Coordinate closestPoint2LineString(Coordinate p, LineString l) {
 		Coordinate clsPoint = null;		
-		clsPoint = DistanceOp.nearestPoints( geoFactory.createPoint(p), l)[1];
+		clsPoint = DistanceOp.nearestPoints( GEO_FACTORY.createPoint(p), l)[1];
 		return clsPoint;
 	}
 
@@ -300,7 +294,7 @@ public class MapUtil {
 	public static Coordinate closestPoint2MultiLineString(Coordinate p,
 			MultiLineString ml) {
 		Coordinate clsPoint = null;
-		clsPoint = DistanceOp.nearestPoints(geoFactory.createPoint(p), ml)[1];
+		clsPoint = DistanceOp.nearestPoints(GEO_FACTORY.createPoint(p), ml)[1];
 		return clsPoint;
 	}
 
@@ -333,7 +327,7 @@ public class MapUtil {
 	 */
 	public static Point getPoint(double lon, double lat) {
 		Coordinate p = new Coordinate(lon, lat);
-		return geoFactory.createPoint(p);
+		return GEO_FACTORY.createPoint(p);
 	}
 
 	/**
@@ -344,6 +338,6 @@ public class MapUtil {
 	 * @return Point
 	 */
 	public static Point getPoint(Coordinate p) {
-		return geoFactory.createPoint(p);
+		return GEO_FACTORY.createPoint(p);
 	}
 }

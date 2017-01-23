@@ -33,7 +33,7 @@ public class ShpfileCompiler {
 	 * @throws Exception
 	 *             读取异常
 	 */
-	public static SimpleFeatureSource read(String shapePath) throws Exception {
+	public SimpleFeatureSource read(String shapePath) throws Exception {
 		File file = new File(shapePath);
 		Map<String, Object> connect = new HashMap<String, Object>();
 		connect.put("url", file.toURI().toURL());
@@ -54,7 +54,7 @@ public class ShpfileCompiler {
 	 * @throws Exception
 	 *             异常
 	 */
-	public static HashMap<Long, Long> getReplaceNodeKV(String inNodeShapePath)
+	public  HashMap<Long, Long> getReplaceNodeKV(String inNodeShapePath)
 			throws Exception {
 
 		// 处理临界点号，把在不同网格，坐标相同，编号不同的归一
@@ -81,7 +81,7 @@ public class ShpfileCompiler {
 				ajNodeKV.put(id, aid);
 			}
 		}
-
+		nIterator.close();
 		featureSource.getDataStore().dispose();
 		return ajNodeKV;
 	}
@@ -98,7 +98,7 @@ public class ShpfileCompiler {
 	 * @throws Exception
 	 *             异常
 	 */
-	public static void processNode(String inNodeShapePath,
+	public  void processNode(String inNodeShapePath,
 			String nodeOutCsvPath, HashMap<Long, Long> rpNodeKV)
 			throws Exception {
 
@@ -126,6 +126,7 @@ public class ShpfileCompiler {
 			}
 			out.println(id + ":" + geometry);
 		}
+		nIterator.close();
 		out.close();
 		nodeFeatureSource.getDataStore().dispose();
 	}
@@ -133,7 +134,7 @@ public class ShpfileCompiler {
 	/**
 	 * 抽取道路信息.
 	 * 
-	 * @param inLinkShapePath
+	 * @param linkShpfilePath
 	 *            link输入数据路径
 	 * @param outLinkCsvPath
 	 *            link输出数据路径
@@ -142,7 +143,7 @@ public class ShpfileCompiler {
 	 * @throws Exception
 	 *             异常
 	 */
-	public static void processLink(String inLinkShapePath,
+	public  void processLink(String linkShpfilePath,
 			String outLinkCsvPath, HashMap<Long, Long> rpNodeKV)
 			throws Exception {
 		// 根据代码设置道路宽度
@@ -166,7 +167,7 @@ public class ShpfileCompiler {
 		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(
 				outLinkCsvPath)));
 		// R 表的shapefile
-		SimpleFeatureSource linkFeatureSource = read(inLinkShapePath);
+		SimpleFeatureSource linkFeatureSource = read(linkShpfilePath);
 		
 		// 节点集合
 		
@@ -253,6 +254,7 @@ public class ShpfileCompiler {
 						+ length + ":" + speedlimit + ":" + geometry);
 			}
 		}
+		linkIterator.close();
 		out.close();
 		linkFeatureSource.getDataStore().dispose();
 	}
@@ -267,7 +269,7 @@ public class ShpfileCompiler {
 	 * @throws Exception
 	 *             异常
 	 */
-	public static void tileGrid(String inLinkShapePath, String cellOutCsvPath)
+	public  void tileGrid(String inLinkShapePath, String cellOutCsvPath)
 			throws Exception {
 		tileGrid(inLinkShapePath, cellOutCsvPath, MapUtil.DEFAULT_CELL_SIZE, 1);
 	}
@@ -286,7 +288,7 @@ public class ShpfileCompiler {
 	 * @throws Exception
 	 *             异常
 	 */
-	public static void tileGrid(String inLinkShapePath, String cellOutCsvPath,
+	public  void tileGrid(String inLinkShapePath, String cellOutCsvPath,
 			int csize, int cellType) throws Exception {
 		// 保存网格号
 		HashMap<String, Integer> gridMap = new HashMap<String, Integer>();
@@ -306,7 +308,7 @@ public class ShpfileCompiler {
 				gridMap.put(gridID, Integer.parseInt(gridID));
 			}
 		}
-
+		iterator.close();
 		// 按网格集合循环选择link
 		Iterator<Entry<String, Integer>> itor = gridMap.entrySet().iterator();
 		while (itor.hasNext()) {
@@ -322,6 +324,7 @@ public class ShpfileCompiler {
 				out.println(e.getKey() + ":" + e.getValue());
 			}
 		}
+
 		out.close();
 		linkFeatureSource.getDataStore().dispose();
 	}
@@ -341,7 +344,7 @@ public class ShpfileCompiler {
 	 *             异常
 	 * @return HashMap<String, StringBuffer> 小网格信息
 	 */
-	private static HashMap<String, StringBuffer> tileCell(Integer gridNo,
+	private  HashMap<String, StringBuffer> tileCell(Integer gridNo,
 			SimpleFeatureSource linkFeatureSource, int cellSize, int cellType)
 			throws Exception {
 
@@ -445,7 +448,7 @@ public class ShpfileCompiler {
 	 * @param gs
 	 *            点序
 	 */
-	private static void saveLink2Cell(int cellType, String linkid,
+	private  void saveLink2Cell(int cellType, String linkid,
 			StringBuffer sb, String direction, Geometry gs) {
 		// TODO Auto-generated method stub
 		// cellType表示两种保存方式，1表示只保存linkid，2表示保存link信息
@@ -493,7 +496,7 @@ public class ShpfileCompiler {
 	 * @param gridNo
 	 *            gridNo
 	 */
-	private static void setCellPolygonKV(int xsize, long ysize, double minx,
+	private  void setCellPolygonKV(int xsize, long ysize, double minx,
 			double cxdelta, double cydelta, double miny,
 			HashMap<String, Polygon> cellPolygonKV, Integer gridNo) {
 		// TODO Auto-generated method stub
@@ -514,8 +517,8 @@ public class ShpfileCompiler {
 						new Coordinate(cminx, cmaxy),
 						new Coordinate(cminx, cminy), };
 
-				LinearRing linearRing = MapUtil.geoFactory.createLinearRing(points);
-				Polygon polygon = MapUtil.geoFactory.createPolygon(linearRing);
+				LinearRing linearRing = MapUtil.GEO_FACTORY.createLinearRing(points);
+				Polygon polygon = MapUtil.GEO_FACTORY.createPolygon(linearRing);
 				cellPolygonKV.put(gridNo + "_" + m + "_" + n, polygon);
 				// System.out.println(gridNo+"_"+m+"_"+n+" : "+polygon);
 			}
@@ -538,7 +541,7 @@ public class ShpfileCompiler {
 	 * @param cellOutCsvPath
 	 *            小网格输出路径
 	 */
-	public static void processMap(String inNodeShapePath,
+	public  void processMap(String inNodeShapePath,
 			String inLinkShapePath, String nodeOutCsvPath,
 			String outLinkCsvPath, String cellOutCsvPath) {
 		try {
@@ -555,13 +558,14 @@ public class ShpfileCompiler {
 		}
 	}
 
-	public static void main(String[] args) {
+	public  void main(String[] args) {
 		try {
-
-			processMap("F:/beijing/level2/beijing/road/Nbeijing.shp",
-					"F:/beijing/level2/beijing/road/Rbeijing.shp",
-					"E:/Prj/OD/test/N-G.csv", "E:/Prj/OD/test/R-G.csv",
-					"E:/Prj/OD/test/C-60-G.csv");
+			String nShp = args[1];
+			String rShp = args[2];
+			String nOut = "./N-G.csv";
+			String rOut = "./R-G.csv";
+			String cOut = "./C-G.csv";
+			new ShpfileCompiler().processMap(nShp, rShp, nOut, rOut, cOut);
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,5 +1,7 @@
 package io.emu.route.compiler.neo4j;
 
+import io.emu.route.compiler.map.Link;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -59,9 +61,6 @@ public class RouteTraverser implements Runnable {
 					System.out.println(in.getName() + "-line:" + cnt);
 				}
 				String[] info = line.split(":");
-				// Node node =
-				// graphDb.getNodeById(Long.parseLong(info[0].trim()));
-				// String snode = (String) node.getProperty("nodeid");
 				String snode = info[0];
 				//
 				IndexManager index = graphDb.index();
@@ -77,8 +76,6 @@ public class RouteTraverser implements Runnable {
 							@Override
 							public Iterable<Relationship> expand(Path path,
 									BranchState<State> state) {
-								// TODO Auto-generated method stub
-								// System.out.println("call expand method.");
 								Iterable<Relationship> b = null;
 								int retry = 3;
 								while (retry > 0) {
@@ -99,8 +96,6 @@ public class RouteTraverser implements Runnable {
 
 							@Override
 							public PathExpander<State> reverse() {
-								// TODO Auto-generated method stub
-								// System.out.println("call unsafe method.");
 								return null;
 							}
 
@@ -121,32 +116,24 @@ public class RouteTraverser implements Runnable {
 							public Evaluation evaluate(
 									org.neo4j.graphdb.Path path,
 									BranchState<State> state) {
-								// TODO Auto-generated method stub
-								// System.out.println("call evaluate method.");
-								// if(path.lastRelationship() == null&&){}
 								if (path.startNode() == path.endNode()) {
-									// System.out.println(state.getState().t+"=>"+"Start Node");
 									return Evaluation.EXCLUDE_AND_CONTINUE;
 								}
-								// Relationship rel = path.lastRelationship();
 								double t = 0.0;
 								int cost = 0;
 								for (Relationship rel : path.relationships()) {
-									Float len = 0.0f;
-									Float speedlimit = 0.0f;
+									Integer len = 0;
+									Integer speedlimit = 0;
 									int retry = 3;
 
 									while (retry > 0) {
 										try {
-											len = (Float) rel
-													.getProperty("length");
-											speedlimit = (Float) rel
-													.getProperty("speedlimit");
+											len = (Integer) rel.getProperty("length");
+											speedlimit = (Integer) rel.getProperty("speedlimit");
 											break;
 										} catch (Exception e) {
 											e.printStackTrace();
-											System.out.println("err Node=>"
-													+ rel);
+											System.out.println("err Node=>"+ rel);
 											retry--;
 										}
 									}
@@ -155,29 +142,9 @@ public class RouteTraverser implements Runnable {
 									t += len / (speedlimit * 1000.0 / (3600));
 								}
 
-								// state.getState().t = state.getState().t + t;
-								// state.getState().cost = state.getState().cost
-								// + len;
-
-//								String mysnode = (String) path.startNode()
-//										.getProperty("nodeid");
-//								String myenode = (String) path.endNode()
-//										.getProperty("nodeid");
-								// String nodeStr = mysnode
-								// +":"+myenode+":"+path.length()+"=>";
 								if (t > 2 * 60) {
-
-									// System.out.println(nodeStr+t+","+cost+"=>"+"INCLUDE_AND_PRUNE");
-									// state.getState().t = state.getState().t -
-									// t;
-									// state.getState().cost =
-									// state.getState().cost - len;
 									return Evaluation.INCLUDE_AND_PRUNE;
 								}
-								// state.getState().t = state.getState().t + t;
-								// state.getState().cost = state.getState().cost
-								// + len;
-								// System.out.println(nodeStr+t+","+cost+"=>"+"INCLUDE_AND_CONTINUE");
 								return Evaluation.INCLUDE_AND_CONTINUE;
 							}
 
@@ -187,41 +154,26 @@ public class RouteTraverser implements Runnable {
 
 				for (Path p : my) {
 					String enode = (String) p.endNode().getProperty("nodeid");
-					// String snode = (String)
-					// p.startNode().getProperty("nodeid");
-					// Node s = p.startNode();
-					// Node e = p.endNode();
 					MyPath myp = new MyPath(0, snode, enode);
 					int cost = 0;
 
-					WeightedPath shortest = RouteFinder.find(graphDb, snode,
-							enode);
-					Iterator<Relationship> it = shortest.relationships()
-							.iterator();
+					WeightedPath shortest = RouteFinder.find(graphDb, snode,enode);
+					Iterator<Relationship> it = shortest.relationships().iterator();
 					while (it.hasNext()) {
 						Relationship rel = it.next();
-						String mysnode = (String) rel.getStartNode()
-								.getProperty("nodeid");
-						String myenode = (String) rel.getEndNode().getProperty(
-								"nodeid");
+						String mysnode = (String) rel.getStartNode().getProperty("nodeid");
+						String myenode = (String) rel.getEndNode().getProperty("nodeid");
 						String id = (String) rel.getProperty("linkid") + "";
-						String width = Float.toString((Float) rel
-								.getProperty("width"));
-						float flength = (Float) rel.getProperty("length");
-						int length = (int) flength;
-
-						Float speedlimit = (Float) rel
-								.getProperty("speedlimit");
-						Integer direction = (Integer) rel
-								.getProperty("direction");
+						Integer width = (Integer) rel.getProperty("width");
+						Integer length = (Integer) rel.getProperty("length");
+						Integer speedlimit = (Integer) rel.getProperty("speedlimit");
+						Integer direction = (Integer) rel.getProperty("direction");
 						String kind = (String) rel.getProperty("roadtype");
-						String roadclass = (String) rel
-								.getProperty("roadclass");
+						String roadclass = (String) rel.getProperty("roadclass");
 						cost += length;
 
-						LinkMB ll = new LinkMB(id, mysnode, myenode,
-								direction.toString(), roadclass, kind, width,
-								length, speedlimit.intValue());
+						Link ll = new Link(id, mysnode, myenode, width, length, speedlimit,
+								direction, roadclass, kind,null);
 						myp.addLink(ll);
 					}
 					myp.setCost((int) shortest.weight());
@@ -240,14 +192,12 @@ public class RouteTraverser implements Runnable {
 
 
 	public static void main(String[] args) throws Exception {
-		
 
-		String in = "E:/Prj/OD/test/uN-G.csv";
-		String out = "E:/Prj/OD/test/";
+		String in = args[1];
+		String out = args[2];
+		String db = args[3];
 		int thread = 1;
-
-		String db = "E:/Prj/OD/test/neo4j-db-G";
-
+		
 		HashMap<String, String> configuration = new HashMap<String, String>();
 		configuration.put("use_memory_mapped_buffers", "true");
 		configuration.put("grab_file_lock", "false");

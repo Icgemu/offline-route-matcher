@@ -1,12 +1,11 @@
 package io.emu.route.compiler.neo4j;
 
 import io.emu.route.compiler.map.Link;
-import io.emu.route.compiler.map.ParseUtil;
+import io.emu.route.compiler.map.MapUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,9 +18,14 @@ import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexManager;
 import org.neo4j.graphdb.index.RelationshipIndex;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.Point;
+
 public class DirectImport2Neo4J {
 
-	private static void saveNode(
+	private void saveNode(
 			ArrayList<io.emu.route.compiler.map.Node> nodes, String neo4jDbPath) {
 
 		HashMap<String, String> configuration = new HashMap<String, String>();
@@ -74,7 +78,7 @@ public class DirectImport2Neo4J {
 	 * @throws Exception
 	 *             异常
 	 */
-	public static synchronized void importNode(String nodeCsvPath,
+	public  synchronized void importNode(String nodeCsvPath,
 			String neo4jDbPath) throws Exception {
 		ArrayList<io.emu.route.compiler.map.Node> nodes = new ArrayList<io.emu.route.compiler.map.Node>();
 		// 用于去除重复的node
@@ -83,8 +87,7 @@ public class DirectImport2Neo4J {
 		BufferedReader bf = new BufferedReader(new FileReader(file));
 		String line = null;
 		while ((line = bf.readLine()) != null) {
-			io.emu.route.compiler.map.Node cnNode = ParseUtil
-					.parseNodeLine(line);
+			io.emu.route.compiler.map.Node cnNode = parseNodeLine(line);
 			// 去除重复点
 			// if (!nkv.containsKey(cnNode.getId())) {
 			nodes.add(cnNode);
@@ -100,6 +103,14 @@ public class DirectImport2Neo4J {
 
 		bf.close();
 	}
+	
+	public  io.emu.route.compiler.map.Node parseNodeLine(String line) throws Exception {
+		String[] s = line.split(":");
+		Long id = Long.parseLong(s[0]);
+		Geometry geometry = MapUtil.parseWktString(s[1]);
+		Point point = (Point) geometry;
+		return new io.emu.route.compiler.map.Node(id + "", point);
+	}
 
 	/**
 	 * 连接neo4j写入link.
@@ -109,7 +120,7 @@ public class DirectImport2Neo4J {
 	 * @param neo4jDbPath
 	 *            neo4j数据库路径
 	 */
-	private static void saveLink(ArrayList<Link> links, String neo4jDbPath) {
+	private  void saveLink(ArrayList<Link> links, String neo4jDbPath) {
 		HashMap<String, String> configuration = new HashMap<String, String>();
 		// 数据库链接参数
 		configuration.put("use_memory_mapped_buffers", "true");
@@ -145,10 +156,10 @@ public class DirectImport2Neo4J {
 				road.setProperty("linkid", link.getId());
 				road.setProperty("width", link.getWidth());
 				road.setProperty("length", link.getLength());
-				road.setProperty("speedlimit", link.getSpeedlimit());
+				road.setProperty("speedlimit", link.getSpeedLimit());
 				road.setProperty("direction", link.getDirection());
-				road.setProperty("roadtype", link.getRoadtype());
-				road.setProperty("roadclass", link.getRoadclass());
+				road.setProperty("roadtype", link.getRoadType());
+				road.setProperty("roadclass", link.getRoadClass());
 
 				relationIndex.add(road, "linkid", road.getProperty("linkid"));
 			}
@@ -170,7 +181,7 @@ public class DirectImport2Neo4J {
 	 * @throws Exception
 	 *             异常
 	 */
-	public static synchronized void importLink(String linkCsvPath,
+	public  synchronized void importLink(String linkCsvPath,
 			String neo4jDbPath) throws Exception {
 		ArrayList<Link> links = new ArrayList<Link>();
 		// 用以去除重复link
@@ -180,7 +191,7 @@ public class DirectImport2Neo4J {
 		String line = null;
 
 		while ((line = bf.readLine()) != null) {
-			Link link = ParseUtil.parseLinkLine(line);
+			Link link = parseLinkLine(line);
 			// 去除重复link
 			// if (!rkv.containsKey(link.getId())) {
 			links.add(link);
@@ -195,16 +206,45 @@ public class DirectImport2Neo4J {
 		saveLink(links, neo4jDbPath);
 		bf.close();
 	}
+	
+	public  Link parseLinkLine(String line) throws Exception {
+		String[] s = line.split(":");
 
-	public static void main(String[] args) throws URISyntaxException {
-		try {
-			importNode("E:/Prj/OD/test/uN-G.csv", "E:/Prj/OD/test/neo4j-db-G/");
-			importLink("E:/Prj/OD/test/R-G.csv", "E:/Prj/OD/test/neo4j-db-G/");
-		} catch (Exception e1) {
-			e1.printStackTrace();
+		Long id = Long.parseLong(s[0]);
+
+		Long snodeid = Long.parseLong(s[1]);
+		Long enodeid = Long.parseLong(s[2]);
+
+		int orientation = Integer.parseInt(s[3]);
+		String roadclass = s[4];
+		String roadtype = s[5];
+
+		int width = Integer.parseInt(s[6]);
+		int length = Integer.parseInt(s[7]);
+		int speedLimit = Integer.parseInt(s[8]);
+
+		Geometry geometry = MapUtil.parseWktString(s[9]);
+		LineString ln = null;
+
+		if (geometry.getGeometryType().equalsIgnoreCase("MultiLineString")) {
+			MultiLineString mln = (MultiLineString) geometry;
+			ln = (LineString) mln.getGeometryN(0);
 		}
 
-	
+		return new Link(id + "", snodeid + "", enodeid + "", width, length,
+				speedLimit, orientation, roadclass, roadtype, ln);
+	}
+
+	public static void main(String[] args) throws Exception {
+
+		String nCsv = args[1];
+		String rCsv = args[2];
+		String db = args[3];
+
+		DirectImport2Neo4J doer = new DirectImport2Neo4J();
+		doer.importNode(nCsv, db);
+		doer.importLink(rCsv, db);
+
 	}
 
 }
