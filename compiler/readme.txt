@@ -26,9 +26,5 @@
 4、导入lucene
    1、使用com.cennavi.compiler.lucence.BasicNetworkIndexer把N表和R表数据导入lucene
    2、使用com.cennavi.compiler.lucence.RouteTreeIndexer把route.csv导入lucene
-   
-   
-由于neo4j 使用的lucene版本 和lucece-4.7有冲突，为方便现在两个版本都在依赖路径里面，
-使用neo4j时不要用4.7版本，使用lucene时不要用3.6版本。
-（3.6的lucene生成的索引比4.7大很多，所以没有统一）
+
    

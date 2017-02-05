@@ -1,6 +1,6 @@
 package io.emu.route.matcher.mapmatch;
 
-import io.emu.route.matcher.pojo.Link;
+import io.emu.route.util.Link;
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;
 import io.protostuff.Schema;
@@ -107,32 +107,32 @@ public class CellTools {
 		return links;
 	}
 
-	public static void r2Redis(String rPath, String host) throws Exception {
-		Jedis jedis = new Jedis(host);
-		BufferedReader br = new BufferedReader(new FileReader(rPath));
-		String line = "";
-		int count = 0;
-		while ((line = br.readLine()) != null) {
-			String[] s = line.split("@");
-			String id = s[0];
-			String direction = s[1];
-			boolean isDual = true;
-			if (direction.equals("s")) {
-				isDual = false;
-			}
-			String snode = s[2];
-			String enode = s[3];
-			String length = s[4];
-			LineString linestring = createLineByWKT(s[5]);
-
-			byte[] b = serializeProtoStuffProductsList(new Link(id, isDual,
-					Long.parseLong(snode), Long.parseLong(enode),
-					Integer.parseInt(length), linestring));
-			jedis.set(id.getBytes(), b);
-			System.out.println(id + "-" + (++count));
-		}
-		jedis.close();
-	}
+//	public static void r2Redis(String rPath, String host) throws Exception {
+//		Jedis jedis = new Jedis(host);
+//		BufferedReader br = new BufferedReader(new FileReader(rPath));
+//		String line = "";
+//		int count = 0;
+//		while ((line = br.readLine()) != null) {
+//			String[] s = line.split("@");
+//			String id = s[0];
+//			String direction = s[1];
+//			boolean isDual = true;
+//			if (direction.equals("s")) {
+//				isDual = false;
+//			}
+//			String snode = s[2];
+//			String enode = s[3];
+//			String length = s[4];
+//			LineString linestring = createLineByWKT(s[5]);
+//
+//			byte[] b = serializeProtoStuffProductsList(new Link(id, isDual,
+//					Long.parseLong(snode), Long.parseLong(enode),
+//					Integer.parseInt(length), linestring));
+//			jedis.set(id.getBytes(), b);
+//			System.out.println(id + "-" + (++count));
+//		}
+//		jedis.close();
+//	}
 
 	public static void cell2Redis(String cellIndexPath, String cellDataPath,
 			String host) throws Exception {

@@ -1,5 +1,7 @@
 package io.emu.route.matcher.pojo;
 
+import io.emu.route.util.Link;
+
 import com.vividsolutions.jts.geom.Coordinate;
 
 public class CandidatePrj {

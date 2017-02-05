@@ -1,6 +1,9 @@
 package io.emu.route.compiler.map;
 
+import io.emu.route.util.MapUtil;
+
 import java.io.Serializable;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Point;
 

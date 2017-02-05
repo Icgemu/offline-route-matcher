@@ -3,9 +3,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.icgemu</groupId>
     <artifactId>offline-route-matcher</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <groupId>io.emu</groupId>
   </parent>
   <artifactId>matcher</artifactId>
   <name>matcher</name>
@@ -48,6 +48,11 @@
     <artifactId>libthrift</artifactId>
     <version>0.9.2</version>
 </dependency>
-  	
+
+  	<dependency>
+  		<groupId>io.emu</groupId>
+  		<artifactId>compiler-util</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
   </dependencies>
 </project>

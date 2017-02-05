@@ -14,7 +14,7 @@ import org.apache.lucene.store.FSDirectory;
 
 public class RouteTreeSearcher {
 
-	static void search(String file, String outPath) throws Exception {
+	public void search(String file, String outPath) throws Exception {
 		FSDirectory dir = FSDirectory.open(new File(outPath).toPath());
 		DirectoryReader ireader = DirectoryReader.open(dir);
 		BufferedReader bf = new BufferedReader(new FileReader(file));
@@ -63,11 +63,10 @@ public class RouteTreeSearcher {
 		ireader.close();
 		dir.close();
 		bf.close();
-
 	}
 
 	public static void main(String[] args) throws Exception {
-		search("E:/Prj/OD/my-route-sample.csv", "E:/Prj/OD/mm-db-tree-3");
+		//search("E:/Prj/OD/my-route-sample.csv", "E:/Prj/OD/mm-db-tree-3");
 	}
 
 }

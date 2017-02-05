@@ -24,21 +24,13 @@ public class AStarPathFinder extends AStar<String> {
 		return map.getCost(from, to);
 	}
 
-	/**
-	 * Expand a path.
-	 *
-	 * @param path
-	 *            The path to expand.
-	 */
+	
 	@Override
 	protected void expand(Path path) {
 		String p = path.getPoint();
 		Double min = mindists.get(path.getPoint());
 
-		/*
-		 * If a better path passing for this point already exists then don't
-		 * expand it.
-		 */
+	
 		if (min == null || min.doubleValue() > path.f.doubleValue())
 			mindists.put(path.getPoint(), path.f);
 		else

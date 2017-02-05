@@ -2,12 +2,6 @@ package io.emu.route.compiler.lucene;
 
 import java.util.HashMap;
 
-/**
- * TODO(这里用一句话描述这个类的作用)
- * 
- * @author Administrator
- * @version 2014年6月20日 下午2:56:01
- */
 public class Node {
 	int idx;
 	int parent = -1;
@@ -29,15 +23,4 @@ public class Node {
 	Node get(String link) {
 		return map.get(link);
 	}
-
-	/**
-	 * TODO(功能描述)
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 }

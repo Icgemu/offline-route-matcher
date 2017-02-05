@@ -1,4 +1,4 @@
-package io.emu.route.compiler.map;
+package io.emu.route.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;

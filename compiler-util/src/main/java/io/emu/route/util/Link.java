@@ -1,4 +1,4 @@
-package io.emu.route.compiler.map;
+package io.emu.route.util;
 
 import java.io.Serializable;
 
@@ -28,6 +28,9 @@ public class Link implements Serializable {
 	
 	private LineString geometry;
 	
+	public Link() {
+	}
+
 	public Link(String id, String snode, String enode, int width,
 			int length, int speedLimit, int direction, String roadClass,
 			String roadType, LineString geometry) {

@@ -81,13 +81,13 @@ public class Neo4JAstar {
 		return paths;
 	}
 
-	public WeightedPath find(String snode, String enode) {
-		return find(graphDb, snode, enode);
-	}
+//	public WeightedPath find(String snode, String enode) {
+//		return find(graphDb, snode, enode);
+//	}
 
-	public static List<WeightedPath> find(List<String> sNodes,
-			List<String> eNodes) {
-		return find(graphDb, sNodes, eNodes);
-	}
+//	public static List<WeightedPath> find(List<String> sNodes,
+//			List<String> eNodes) {
+//		return find(graphDb, sNodes, eNodes);
+//	}
 
 }

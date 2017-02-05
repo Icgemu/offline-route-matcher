@@ -4,6 +4,7 @@ import io.emu.route.matcher.pojo.CandidatePath;
 import io.emu.route.matcher.pojo.CandidatePrj;
 import io.emu.route.matcher.pojo.GPS;
 import io.emu.route.matcher.pojo.Link;
+import io.emu.route.util.MapUtil;
 
 import java.io.BufferedWriter;
 import java.io.File;

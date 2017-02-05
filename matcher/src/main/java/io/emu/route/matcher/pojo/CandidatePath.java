@@ -1,5 +1,7 @@
 package io.emu.route.matcher.pojo;
 
+import io.emu.route.util.Link;
+
 import java.util.List;
 
 public class CandidatePath {

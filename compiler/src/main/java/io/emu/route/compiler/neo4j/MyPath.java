@@ -1,16 +1,9 @@
 package io.emu.route.compiler.neo4j;
 
-import io.emu.route.compiler.map.Link;
-
+import io.emu.route.util.Link;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * TODO(这里用一句话描述这个类的作用)
- * 
- * @author Administrator
- * @version 2014年2月23日 上午12:41:21
- */
 public class MyPath {
 
 	int cost;
@@ -18,13 +11,7 @@ public class MyPath {
 	String enode;
 	List<Link> links = new ArrayList<Link>();
 
-	/**
-	 * 构造函数
-	 * 
-	 * @param cost
-	 * @param snode
-	 * @param enode
-	 */
+	
 	public MyPath(int cost, String snode, String enode) {
 		super();
 		this.cost = cost;

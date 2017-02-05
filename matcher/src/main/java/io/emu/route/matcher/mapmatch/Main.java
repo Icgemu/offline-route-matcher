@@ -3,7 +3,6 @@ package io.emu.route.matcher.mapmatch;
 import io.emu.route.matcher.pojo.CandidatePath;
 import io.emu.route.matcher.pojo.CandidatePrj;
 import io.emu.route.matcher.pojo.GPS;
-import io.emu.route.matcher.pojo.Link;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

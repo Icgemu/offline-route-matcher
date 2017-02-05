@@ -1,7 +1,7 @@
 package io.emu.route.compiler.neo4j;
 
-import io.emu.route.compiler.map.Link;
-import io.emu.route.compiler.map.MapUtil;
+import io.emu.route.util.Link;
+import io.emu.route.util.MapUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -239,11 +239,11 @@ public class DirectImport2Neo4J {
 
 		String nCsv = args[1];
 		String rCsv = args[2];
-		String db = args[3];
+		String nodedb_dir = args[3];
 
 		DirectImport2Neo4J doer = new DirectImport2Neo4J();
-		doer.importNode(nCsv, db);
-		doer.importLink(rCsv, db);
+		doer.importNode(nCsv, nodedb_dir);
+		doer.importLink(rCsv, nodedb_dir);
 
 	}
 
